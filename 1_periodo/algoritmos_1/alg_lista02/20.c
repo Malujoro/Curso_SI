@@ -17,5 +17,33 @@
 
 int main(void)
 {
+    float peso, altura, imc;
+    char nome[100];
 
+    printf("Nome: ");
+    scanf(" %[^\n]s", nome);
+
+    printf("Peso [kg]: ");
+    scanf(" %f", &peso);
+
+    printf("Altura [m]: ");
+    scanf(" %f", &altura);
+
+    imc = peso / (altura * altura);
+
+    printf("\nPaciente: %s", nome);
+    printf("\nIMC: %.1f", imc);    
+
+    if (imc < 20)
+        printf("\nAbaixo do peso\n");
+    else if (imc < 25)
+        printf("\nNormal\n");
+    else if (imc < 30)
+        printf("\nExcesso de peso\n");
+    else if (imc < 35)
+        printf("\nObesidade\n");
+    else
+        printf("\nObesidade Mórbida\n");
+
+    return 0;
 }
