@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados 20 números, exibir quantos são impares e quantos são pares.
 */
 
 int main(void)

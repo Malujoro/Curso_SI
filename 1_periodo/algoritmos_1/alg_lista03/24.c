@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Um colégio tem 5 turmas e casa turma tem N alunos. Criar um algoritmo
+    que exiba, por turma, total de alunos com média superior a 7 e média geral
+    da escola.
 */
 
 int main(void)

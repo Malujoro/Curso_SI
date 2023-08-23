@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados os números inteiros A e B, fazer um algoritmo que calcule A^B.
 */
 
 int main(void)

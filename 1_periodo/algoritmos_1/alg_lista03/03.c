@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Exibir os números múltiplos de 3 no intervalo de 10 a 30.
 */
 
 int main(void)

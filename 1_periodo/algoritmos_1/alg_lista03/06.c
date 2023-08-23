@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Entrar com N números, exibir a metade e a raiz cúbica de cada número.
+    Onde o valor N é dado também pelo usuário.
 */
 
 int main(void)

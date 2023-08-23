@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Entrar com dois números que indiquem o limite inferior e superior de um
+    intervalo.
+    Exibir os números impares entre o intervalo.
 */
 
 int main(void)

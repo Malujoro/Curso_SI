@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Entrar com números positivos e exibir se cada número é par ou impar.
+    O algoritmo termina quando é digitado -1.
 */
 
 int main(void)

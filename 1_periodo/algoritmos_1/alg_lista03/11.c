@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados N números digitados pelo usuário, exibir o maior e o menor deles.
 */
 
 int main(void)

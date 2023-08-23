@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados 20 números, exibir a média aritmética dos números pares e a
+    média aritmética dos números ímpares.
 */
 
 int main(void)

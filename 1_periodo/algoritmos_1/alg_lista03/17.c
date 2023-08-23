@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Entrar com as idades de 20 pessoas. Exibir a média aritmética das idades,
+    a maior idade e menor idade.
 */
 
 int main(void)

@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Exibir o somatório dos números entre 20 e 60.
 */
 
 int main(void)

@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados os salários bruto de 20 pessoas, exibir o desconto do INSS para
+    cada pessoa segundo a tabela abaixo:
 */
 
 int main(void)

@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 /*
-    Dado um número, informar se ele é ou não é múltiplo de 3.
+    Dados N números digitados pelo usuário, exibir o somatório deles. Onde
+    o valor N é dado também pelo usuário.
 */
 
 int main(void)
