@@ -1,26 +1,53 @@
-arco(a, b, 3).
-arco(b, d, 2).
-arco(d, a, 5).
+progenitor(maria, jose). 
+progenitor(joao, jose).
+progenitor(joao, ana).
+progenitor(jose, julia).
+progenitor(jose, iris).
+progenitor(iris, jorge).
+masculino(joao).  
+masculino(jose).
+masculino(jorge).
+feminino(maria). 
+feminino(ana).
+feminino(julia).
+feminino(iris).
 
-arco(a, c, 4).
-arco(c, d, 4).
 
-arco(d, e, 2).
-arco(e, f, 2).
-arco(f, c, 5).
+filho(Y, X) :- 
+    progenitor(X, Y). 
 
-diferente(X, Y) :-
-    X \= Y.
+mae(X, Y) :- 
+    progenitor(X, Y), 
+    feminino(X). 
 
-mais(X, Y, Z) :-
-    Z is X + Y.
+avo(X, Z) :- 
+    progenitor(X, Y), 
+    progenitor(Y, Z). 
 
-custo(U, V, L) :-
-    (arco(U, V, L) ; arco(V, U, L)), 
-    diferente(U, V).
+irma(X, Y) :- 
+    progenitor(Z, X), 
+    progenitor(Z, Y),
+    feminino(X), 
+    X \= Y. 
 
-custo(U, V, L) :-
-    diferente(U, V),
-    (custo(U, X, R) ; custo(X, U, R)),
-    (custo(X, V, Z) ; custo(V, X, Z)),
-    mais(R, Z, L).
+irmao(X, Y) :- 
+    progenitor(Z, X), 
+    progenitor(Z, Y),
+    masculino(X), 
+    X \= Y. 
+
+tio(X,Z) :-
+    irmao(X,Y),
+    filho(Z,Y),
+    masculino(X).
+
+prima(X,Y):- progenitor(Z,Y),progenitor(W,X),irmao(W,Z),feminino(X).
+
+conjugue(X,Y) :- progenitor(X,Z), progenitor(Y,Z).
+
+
+antepassado(X, Z) :-
+    progenitor(X, Z). 
+antepassado(X, Z) :- 
+    progenitor(X, Y), 
+    antepassado(Y, Z). 
