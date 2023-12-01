@@ -126,14 +126,14 @@ void hex_para_dec(char hexa[], unsigned long int *num)
 
     tam = len(hexa);
 
-    for(i = 0; i < tam; i++)
+    for(i = 0, j = tam-1; i < tam; i++, j--)
     {
-        if(hexa[i] >= '0' && hexa[i] <= '9')
-            *num += (hexa[i] - '0') * pow(16, i);
-        else if(hexa[i] >= 'a' && hexa[i] <= 'z')
-            *num += (hexa[i] - 'a' + 10) * pow(16, i);
-        else if(hexa[i] >= 'A' && hexa[i] <= 'Z')
-            *num += (hexa[i] - 'A' + 10) * pow(16, i);
+        if(hexa[j] >= '0' && hexa[j] <= '9')
+            *num += (hexa[j] - '0') * pow(16, i);
+        else if(hexa[j] >= 'a' && hexa[j] <= 'z')
+            *num += (hexa[j] - 'a' + 10) * pow(16, i);
+        else if(hexa[j] >= 'A' && hexa[j] <= 'Z')
+            *num += (hexa[j] - 'A' + 10) * pow(16, i);
     }
 }
 
@@ -142,7 +142,7 @@ void dec_para_hex(unsigned long int num, char hexa[])
     int i, j, resto;
     char ch, aux;
     
-    hexa[i] = '0';
+    hexa[0] = '0';
     for(i = 0, resto = num; resto > 0; resto /= 16, i++)
     {
         if(resto % 16 < 10)

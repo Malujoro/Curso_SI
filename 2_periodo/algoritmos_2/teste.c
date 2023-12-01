@@ -1,10 +1,10 @@
 #include <stdio.h>
+#include <strings.h>
 
-const TESTE = 123;
 int main()
 {
-	int i = TESTE;
-	int *p;
-	printf("%d\n", *p);
+	printf("\n[%d]\n", strcasecmp("Mateus", "mateus"));
+	printf("\n[%d]\n", strcasecmp("Lucas", "mateus"));
+	printf("\n[%d]\n", strcasecmp("Mateus", "lucas"));
 	return 0;
 }
