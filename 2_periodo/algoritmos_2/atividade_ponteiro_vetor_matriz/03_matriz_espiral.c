@@ -45,17 +45,17 @@ void espiral(int **matriz, int tam)
             {
                 // A primeira metade dos passos serão das colunas, e o restante será das linhas
                 if(j < i)
-                    col++;
+                    col++; // Passo para direita
                 else
-                    lin++;
+                    lin++; // Passo para baixo
             }
             // Caso seja um "Passo par", será decrementado posições
             else
             {
                 if(j < i)
-                    col--;
+                    col--; // Passo para esquerda
                 else
-                    lin--;
+                    lin--; // Passo para cima
             }
             // Verificação para sair do laço de repetição caso a linha ou coluna saia do limite da matriz
             if(lin >= tam || col >= tam)
