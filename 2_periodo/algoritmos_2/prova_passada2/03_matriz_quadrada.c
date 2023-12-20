@@ -67,12 +67,12 @@ int main()
     {
         soma1 = somaDiagonalPrimaria(matriz, lin);
         soma2 = somaDiagonalSecundaria(matriz, lin);
+        printf("\nSoma principal: %d", soma1);
+        printf("\nSoma secundária: %d", soma2);
     }
     else
         printf("\nMatriz não é quadrada!!");
 
-    printf("\nSoma principal: %d", soma1);
-    printf("\nSoma secundária: %d", soma2);
 
     for(i = 0; i < lin; i++)
         free(matriz[i]);
