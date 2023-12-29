@@ -23,7 +23,8 @@ avo(X, Z) :-
 
 irmao(X, Y) :-
     progenitor(Z, X),
-    progenitor(Z, Y).
+    progenitor(Z, Y),
+    X \= Y.
 
 mae(X, Y) :-
     progenitor(X, Y),
