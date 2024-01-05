@@ -3,4 +3,4 @@ verificaIntervalo(A, B, R) :-
     R = A,
     A2 is A+1,
     write(R), nl,
-    verificaIntervalo(A2, B, _).
+    verificaIntervalo(A2, B, R2).
