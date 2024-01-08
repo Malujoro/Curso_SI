@@ -69,3 +69,9 @@ pares([H | T], [H2 | T2]) :-
     (
         pares(T, [H2 | T2])
     ).
+
+inverte([X], [X]) :- !.
+
+inverte([X | T], L2) :-
+    inverte(T, T2),
+    add(X, T2, L2).
