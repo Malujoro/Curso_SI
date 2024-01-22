@@ -17,15 +17,19 @@ void menu(int *op)
 
 	printf("\n----------Menu----------");
 	// Leitura e Gravação - Caractere por Caractere
+	// fputc e fgetc
 	printf("\n[1] - Leitura de frases por caractere por caractere");
 	printf("\n[2] - Exibir frases por caractere por caractere");
 	// Leitura e Gravação - Linha por Linha
+	// fputs e fgets
 	printf("\n[3] - Leitura de frases linha a linha");
 	printf("\n[4] - Exibir frases linha a linha");
 	// Leitura e Gravação - Dados formatados
+	// fprintf e fscanf
 	printf("\n[5] - Leitura de frases dados formatados");
 	printf("\n[6] - Exibir frases dados formatados");
 	// Leitura e Gravação - Blocos de Bytes (Matrizes ou Structs)
+	// fwrite e fread
 	printf("\n[7] - Leitura de frases struct");
 	printf("\n[8] - Exibir frases struct");
 	printf("\n[0] - Sair do programa");
