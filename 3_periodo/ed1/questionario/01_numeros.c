@@ -25,7 +25,7 @@ int main()
 
     if(quant > 0)
     {
-        media = soma/quant;
+        media = (float) soma/quant;
 
         printf("\nSoma: %d", soma);
         printf("\nMédia: %.2f", media);
