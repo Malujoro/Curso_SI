@@ -1,4 +1,4 @@
-// Programa para gerar uma string aleatória dependendo
+// Programa para gerar uma string aleatória de tamanho informado pelo usuário
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

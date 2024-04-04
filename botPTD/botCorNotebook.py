@@ -19,47 +19,52 @@ def verificaShiny():
     # if(clicaImagem('x1.png') or clicaImagem('shiny.png')):
     if(clicaImagem('x1.png')):
         press('p')
+        # click(1225, 725)
         a = input('Pausado! Enter para continuar')
         # press('2')
 
-## Coordenadas Pokémon - PC
-p6 = [1500, 740]
-p5 = [1300, 740]
-p4 = [1070, 740]
-p3 = [855, 740]
-p2 = [660, 740]
-p1 = [460, 740]
+## Coordenadas Pokémon - Notebook
+p6 = [1090, 550]
+p5 = [935, 550]
+p4 = [760, 550]
+p3 = [600, 550]
+p2 = [450, 550]
+p1 = [290, 550]
 
 while True:
     # Entrar na fase
     sleep(2)
-    click(1260, 480)
+    click(915, 325)
 
     # Iniciar partida (Start)
     sleep(0.2)
-    click(1633, 115)
+    click(1200, 60)
 
     # Skipar cena
     sleep(0.2)
-    click(233, 104)
+    click(120, 50)
 
     # Diminuir tela para 75% (tecla 9)
+    # sleep(1)
+    # click(1000, 725)
     sleep(0.2)
     press('7')
 
     # Posicionar os 6 pokemons (do último pro primeiro)
     sleep(0.5)
-    posiciona(p6[0], p6[1], 460, 420)
-    posiciona(p5[0], p5[1], 260, 480)
-    posiciona(p4[0], p4[1], 260, 360)
-    posiciona(p3[0], p3[1], 260, 300)
-    posiciona(p2[0], p2[1], 260, 260)
-    posiciona(p1[0], p1[1], 230, 160)
+    posiciona(p6[0], p6[1], 295, 285)
+    posiciona(p5[0], p5[1], 140, 340)
+    posiciona(p4[0], p4[1], 135, 250)
+    posiciona(p3[0], p3[1], 135, 200)
+    posiciona(p2[0], p2[1], 135, 165)
+    posiciona(p1[0], p1[1], 120, 90)
 
     # Aumentar speed para x4 (tecla 4)
     sleep(0.2)
     press('4')
+    # click(760, 725)
     press('0')
+    # click(775, 725)
 
     # Looping para verificar o level up
     while True:

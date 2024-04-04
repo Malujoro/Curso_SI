@@ -15,6 +15,7 @@ def clicaImagem(nome):
         return 1
     return 0
 
+## Coordenadas Pokémon - PC
 p6 = [1500, 740]
 p5 = [1300, 740]
 p4 = [1070, 740]
