@@ -17,11 +17,9 @@ while True:
     break
 
 lista = []
-for i in range(quant):
-    while True:
-        num = random.randint(inicio, fim)
-        if(lista.count(num) == 0):
-            lista.append(num)
-            break
+while len(lista) < quant:
+    num = random.randint(inicio, fim)
+    if(lista.count(num) == 0):
+        lista.append(num)
 
 print(lista)
