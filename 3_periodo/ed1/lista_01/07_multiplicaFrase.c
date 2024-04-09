@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+ 
 char *repete(char *s, int n)
 {
     int tam;
@@ -25,6 +25,7 @@ int main()
 {
     char *nome = repete("[Mateus]", 5);
     printf("\n%s\n", nome);
-
+    
+    free(nome);
     return 0;
 }
