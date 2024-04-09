@@ -1,0 +1,2 @@
+A alocação dinâmica tem como vantagem um melhor gerenciamento da memória, podendo mudar dinamicamente seu tamanho.
+Em comparação, na alocação estática só é possível alocar um tamanho estático, não possibilitando sua alteração em tempo de execução (enquanto o programa roda)
