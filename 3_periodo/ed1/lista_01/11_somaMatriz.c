@@ -6,6 +6,8 @@ double **alocarMatriz(int m, int n)
     double **matriz = (double **) malloc(m * sizeof(double *));
     for(int i = 0; i < m; i++)
         matriz[i] = (double *) malloc(n * sizeof(double));
+
+    return matriz;
 }
 
 void desalocarMatriz(double **matriz, int m)
@@ -19,12 +21,23 @@ void preencherMatriz(double **matriz, int m, int n)
 {
     for(int i = 0; i < m; i++)
     {
-        for(int j = 0; j < m; j++)
+        for(int j = 0; j < n; j++)
         {
-            printf("Matri");
-            scanf("%f", &matriz[i][j]);
+            printf("Matriz[%d][%d]: ", i, j);
+            scanf("%lf", &matriz[i][j]);
         }
     }
+}
+
+void exibirMatriz(double **matriz, int m, int n)
+{
+    for(int i = 0; i < m; i++)
+    {
+        for(int j = 0; j < n; j++)
+            printf("%lf ", matriz[i][j]);
+        printf("\n");
+    }
+    printf("\n");
 }
 
 int main()
@@ -47,7 +60,12 @@ int main()
             matriz3[i][j] = matriz1[i][j] + matriz2[i][j];
     }
 
+    exibirMatriz(matriz1, m, n);
+    exibirMatriz(matriz2, m, n);
+    exibirMatriz(matriz3, m, n);
+
     desalocarMatriz(matriz1, m);
     desalocarMatriz(matriz2, m);
+    desalocarMatriz(matriz3, m);
     return 0;
 }
