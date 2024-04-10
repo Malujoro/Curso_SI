@@ -78,14 +78,11 @@ int main()
             {
                 for(int k = 0; k < menorLado; k++)
                 {
-                    if(menorLado == n)
+                    if(calculaDistancia(centro, j, k) < raio)
                     {
-                        if(calculaDistancia(centro, j, k) < raio)
+                        if(menorLado == n)
                             matriz[k][j] = 1;
-                    }
-                    else
-                    {
-                        if(calculaDistancia(centro, j, k) < raio)
+                        else
                             matriz[j][k] = 1;
                     }
                 }

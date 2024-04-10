@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Dado uma combinação de valores X, Y, |. Gere a esta matriz 3d a maior esfera inscrita ao objeto(cubo)
+// Dado uma combinação de valores X, Y, Z. Gere a esta matriz 3d a maior esfera inscrita ao objeto(cubo)
 
 typedef struct
 {
