@@ -1,10 +1,11 @@
 A alocação estática de memória aloca um espaço de tamanho imutável, em tempo de compilação.
-Já a alocação dinâmica aloca um espaço de tamanho alterável (pode ser aumentado ou diminuído)
 
-A alocação dinâmica de memória tem como benefício a possível alteração de seu tamanho em tempo de execução.
+Já a alocação dinâmica aloca um espaço de tamanho alterável (pode ser aumentado ou diminuído), em tempo de execução.
+A alocação dinâmica tem como vantagem poder mudar seu tamanho, aproveitando melhor a memória.
 As possíveis desvantagens são vazamentos de memória
 
-bem como de seus operadores e funções
-“malloc”
-“realloc”
-“free”.
+-malloc: Tem como parâmetros a quantidade de bits a serem alocados. Retorna um ponteiro referente a primeira posição do espaço alocado (primeira posição dele)
+
+-realloc: Tem como parâmetros o ponteiro a ser editado e a quantidade de bits a serem alocados (podendo ser maior ou menor). Retorna um ponteiro referente ao a primeira posição do espaço alocado (primeira posição dele)
+
+-free: Libera um espaço alocado anteriormente

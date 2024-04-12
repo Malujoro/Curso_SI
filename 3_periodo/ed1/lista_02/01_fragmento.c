@@ -15,11 +15,11 @@ int main()
     *q = *p;
     // Q recebe o endereço que P aponta
     q = p;
-    // O endereço de P é liberado
+    // O endereço que P aponta é P liberado
     free(p);
     // Acontece um erro, pois P e Q possuiam o mesmo endereço, e o endereço já foi liberado anteriormente
     free(q);
-    // Caso tudo ocorrese corretamente, P receberia o valor nulo
+    // Caso tudo ocorresse corretamente, Q receberia o valor nulo
     q = NULL;
 
     return 0;
