@@ -1,0 +1,2 @@
+- Falta de espaço para continuar a execução do programa / armazenar mais informações (Podendo provocar lentidão e falhas no sistema)
+- Também pode ocorrer de "mexer" em um local de memória que outro processo está utilizando
