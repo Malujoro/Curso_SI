@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int **alocarMatriz(int lin, int col)
 {
@@ -30,8 +31,7 @@ void preencherMatriz(int **matriz, int lin, int col)
     {
         for(int j = 0; j < col; j++)
         {
-            printf("Matriz[%d][%d]: ", i, j);
-            scanf(" %d", &matriz[i][j]);
+            matriz[i][j] = (rand() % 9) + 1;
         }
     }
 }
@@ -59,36 +59,37 @@ void liberarMatriz(int **matriz, int lin)
     matriz = NULL;
 }
 
-int **somarMatriz(int **matriz1, int **matriz2, int tam)
+int **transposta(int **matriz, int lin, int col)
 {
-    int **matriz3 = alocarMatriz(tam, tam);
+    int **matrizT = alocarMatriz(col, lin);
 
-    for(int i = 0; i < tam; i++)
+    for(int i = 0; i < lin; i++)
     {
-        for(int j = 0; j < tam; j++)
-            matriz3[i][j] = matriz1[i][j] + matriz2[i][j];
+        for(int j = 0; j < col; j++)
+            matrizT[j][i] = matriz[i][j];
     }
-    
-    return matriz3;
+
+    return matrizT;
 }
 
 int main()
 {
-    int tam = 5;
-    int **a = alocarMatriz(tam, tam);
-    int **b = alocarMatriz(tam, tam);
+    int m, n;
 
-    preencherMatriz(a, tam, tam);
-    preencherMatriz(b, tam, tam);
+    srand(time(NULL));
 
-    int **matriz3 = somarMatriz(a, b, tam);
+    printf("Tamanho M N da matriz: ");
+    scanf(" %d %d", &m, &n);
 
-    exibirMatriz(a, tam, tam);
-    exibirMatriz(b, tam, tam);
-    exibirMatriz(matriz3, tam, tam);
+    int **matriz = alocarMatriz(m, n);
+    preencherMatriz(matriz, m, n);
 
-    liberarMatriz(a, tam);
-    liberarMatriz(b, tam);
-    liberarMatriz(matriz3, tam);
+    int **matrizT = transposta(matriz, m, n);
+
+    exibirMatriz(matriz, m, n);
+    exibirMatriz(matrizT, n, m);
+
+    liberarMatriz(matriz, m);
+    liberarMatriz(matrizT, n);
     return 0;
 }

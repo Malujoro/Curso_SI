@@ -1,0 +1,15 @@
+a) P++ e *p++
+    P++ - Movimenta o ponteiro ("andando 1 casa"), mudando o endereço que ele aponta.
+    *p++ - Devido a ordem de prioridade, a primeira instrução executada seria a ++, apontando então para o próximo endereço, e, pelo operador *, retornando o valor daquele endereço.
+
+b) (*p)++ e *(p++)
+    (*p)++ - Retorna o valor no endereço de P, e incrementa ele
+    *(p++) - Muda o valor que P aponta, sendo agora "1 casa" na sua frente. Retorna o valor que está nesse endereço
+
+c) *(p + 8) e (*p) + 8
+    *(p + 8) - Retorna o valor que está "8 casas a frente" de p
+    (*p) + 8 - Retorna o valor que está no endereço de P e efetua a sua soma com 8
+
+d) *(p + 2) e p[2]
+    Tecnicamente falando, ambas as instruções produzem o mesmo resultado, diferindo apenas na notação utilizada (por índice ou por notação de ponteiro).
+    Retornam o valor que está no endereço de "2 casas a frente" de P.
