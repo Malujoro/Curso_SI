@@ -48,14 +48,14 @@ int main()
     scanf(" %d %d", &altura, &largura);
 
     int **matriz = alocaMatriz(altura, largura);
-    int raio;
+    float raio;
     
     Ponto centro;
 
     if(altura < largura)
-        raio = altura/2;
+        raio = (float) altura/2;
     else
-        raio = largura/2;
+        raio = (float) largura/2;
         
     centro.x = largura/2;
     centro.y = altura/2;

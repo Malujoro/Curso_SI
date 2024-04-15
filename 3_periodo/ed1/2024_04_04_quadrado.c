@@ -48,7 +48,7 @@ int main()
     // scanf(" %d", &lado);
 
     int **matriz = alocaMatriz(lado, lado);
-    int raio = lado/2; 
+    float raio = (float) lado/2;
 
     Ponto centro;
 
