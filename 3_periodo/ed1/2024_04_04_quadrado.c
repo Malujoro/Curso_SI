@@ -42,10 +42,11 @@ int calculaDistancia(Ponto centro, int x, int y)
 
 int main()
 {
-    int lado = 30;
+    // int lado = 30;
+    int lado;
 
-    // printf("Digite o lado do quadrado: ");
-    // scanf(" %d", &lado);
+    printf("Digite o lado do quadrado: ");
+    scanf(" %d", &lado);
 
     int **matriz = alocaMatriz(lado, lado);
     float raio = (float) lado/2;
