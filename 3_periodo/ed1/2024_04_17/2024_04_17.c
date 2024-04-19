@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// TODO Talvez modificar o exibir funcionários / clientes (para cadastrar ID) e o ID da organização é pega pelo próprio funcionário (modificar o exibir funcionários para exibir por "classe")
-// TODO Cadastro Cliente possui vetor de pedidos
-// TODO Cadastro Organização possui pedidos efetuados
-// TODO Criar um "adicionar pedido" (adiciona na organização e cliente)
-// TODO Criar um "buscar pedido por organização"
-
 #define MAX_STR 100
 #define TRUE 1
 #define FALSE 0
@@ -19,7 +13,6 @@
 // Tipos do Organizacao
 #define PUBLICA 0
 #define PRIVADA 1
-
 
 int quant_pessoas = 0;
 int quant_cliente = 0;
@@ -46,15 +39,13 @@ typedef struct
     char **itens;
 } Pedido;
 
-
 typedef struct
 {
     Pessoa pessoa;
-    Pedido *pedidos;
+    Pedido **pedidos;
     float limite_credito;
     int quant_pedidos;
 } Cliente;
-
 
 typedef struct
 {
@@ -64,7 +55,6 @@ typedef struct
     Pessoa pessoa;
 } Funcionario;
 
-
 typedef struct {
     int id;
     char nome[MAX_STR];
@@ -72,7 +62,7 @@ typedef struct {
     int quant_funcionarios;
     Funcionario *funcionario;
     int quant_pedidos;
-    Pedido *pedidos_efetuados;
+    Pedido **pedidos_efetuados;
 } Organizacao;
 
 //===========   FUNÇÕES ALOCAR/LIBERAR MEMÓRIA   ===========
@@ -115,7 +105,8 @@ Funcionario *alocarFuncionario(int tam)
     return vetor;
 }
 
-Pedido *alocarPedido(int tam)
+
+Pedido *alocarPedidoVetor(int tam)
 {
     Pedido *vetor = (Pedido *)malloc(tam * sizeof(Pedido));
 
@@ -126,6 +117,23 @@ Pedido *alocarPedido(int tam)
     }
 
     return vetor;
+}
+
+
+Pedido **alocarPedidoMatriz(int tam)
+{
+    Pedido **matriz = (Pedido **)malloc(tam * sizeof(Pedido *));
+
+    if(!matriz)
+    {
+        printf("Erro ao alocar memória!");
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < tam; i++)
+        matriz[i] = alocarPedidoVetor(1);
+
+    return matriz;
 }
 
 char **alocarMatrizStr(int lin, int col)
@@ -165,12 +173,47 @@ void liberarMatriz(void **matriz, int lin)
     free(matriz);
     matriz = NULL;
 }
+
+Pedido **realocarPedido(Pedido **ponteiro, int novoTam)
+{
+    Pedido **aux = (Pedido **) realloc(ponteiro, novoTam * sizeof(Pedido *));
+
+    if(!aux)
+    {
+        printf("\nErro ao realocar memória");
+        return ponteiro;   
+    }
+    return aux;
+}
+
+
+Cliente *realocarCliente(Cliente *ponteiro, int novoTam)
+{
+    Cliente *aux = (Cliente *) realloc(ponteiro, novoTam * sizeof(Cliente));
+
+    if(!aux)
+    {
+        printf("\nErro ao realocar memória");
+        return ponteiro;   
+    }
+    return aux;
+}
+
+Organizacao *realocarOrganizacao(Organizacao *ponteiro, int novoTam)
+{
+    Organizacao *aux = (Organizacao *) realloc(ponteiro, novoTam * sizeof(Organizacao));
+
+    if(!aux)
+    {
+        printf("\nErro ao realocar memória");
+        return ponteiro;   
+    }
+    return aux;
+}
+
 //==========================================================
 
-void limpa_buffer()
-{
-    while(getchar() != '\n');
-}
+void limpa_buffer() { while(getchar() != '\n'); }
 
 // Retorna a validade de uma escolha feita pelo user
 // VALOR MIN / VALOR MAX / ESCOLHA_CLIENTE
@@ -190,15 +233,16 @@ int menu_cadastro()
 
     do
     {
-        printf("\n------[ Menu ]-----");
+        printf("\n--------[ Menu ]--------");
         printf("\n[1] - Cadastrar Organização");
         printf("\n[2] - Cadastrar Cliente");
+        printf("\n[3] - Cadastrar Pedido");
         printf("\n[0] - Sair");
         printf("\nOpção: ");
         scanf(" %d", &op);
         limpa_buffer();
     }
-    while(!validar(0, 2, op));
+    while(!validar(0, 3, op));
     
     return op;
 }
@@ -209,17 +253,16 @@ int menu_exibir()
 
     do
     {
-        printf("\n------[ Menu ]-----");
-        printf("\n[1] - Exibir Organizações");
-        printf("\n[2] - Exibir Cliente");
-        printf("\n[3] - Exibir Pedidos por Organização");
-        printf("\n[4] - Exibir Pedidos por Cliente");
+        printf("\n------------------ [ Menu ] ---------------------");
+        printf("\n[1] - Exibir Todas as Organizações, seus funcionários e pedidos");
+        printf("\n[2] - Exibir Todos os Clientes e seus pedidos");
+        printf("\n[3] - Exibir Todos os Pedidos por Organização");
         printf("\n[0] - Sair");
         printf("\nOpção: ");
         scanf(" %d", &op);
         limpa_buffer();
     }
-    while(!validar(0, 2, op));
+    while(!validar(0, 3, op));
     
     return op;
 }
@@ -230,7 +273,7 @@ int menu()
 
     do
     {
-        printf("\n------[ Menu ]-----");
+        printf("\n---------[ Menu ]--------");
         printf("\n[1] - Cadastrar");
         printf("\n[2] - Exibir");
         printf("\n[0] - Sair");
@@ -243,15 +286,242 @@ int menu()
     return op;
 }
 
+//================   FUNÇÕES DE BUSCA   =================
+
+int buscar_organizacao(Organizacao *organizacao, int id_org)
+{   
+    for(int i = 0; i < quant_organizacao; i++)
+    {
+        if(organizacao[i].id == id_org)
+            return i;
+    }
+    printf("\nNão existe organização com esse id!\n");
+    return -1;
+}
+
+// RETORNA A POSIÇÃO DO FUNCIONARIO NA ORGANIZAÇÃO
+int buscar_funcionario(Funcionario *funcionario, int id_func, int quant_func)
+{   
+    for(int i = 0; i < quant_func; i++)
+    {
+        if(funcionario->pessoa.id == id_func)
+            return i;
+    }
+    printf("\nNão existe funcionario com esse id!\n");
+    return -1;
+}
+
+
+int buscar_cliente(Cliente *cliente, int id_cli)
+{   
+    for(int i = 0; i < quant_organizacao; i++)
+    {
+        if(cliente[i].pessoa.id == id_cli)
+            return i;
+    }
+    printf("\nNão existe cliente com esse id!\n");
+    return -1;
+}
+
+//=============   FUNÇÕES EXIBIR INFORMAÇÕES   =============
+void exibir_pessoa(Pessoa pessoa)
+{
+    printf("\n\nNome: %s", pessoa.nome);
+    printf("\nID: %d", pessoa.id);
+    printf("\nIdade: %d", pessoa.idade);
+}
+
+// Função para exibir os funcionários
+// Recebe o endereço do(s) funcionario(s), a quantidade a ser exibida e o ID da organização
+void exibir_funcionarios(Funcionario *funcionario, int quant, int id)
+{
+    for(int i = 0; i < quant; i++)
+    {
+        exibir_pessoa(funcionario[i].pessoa);
+        printf("\nCargo: ");
+        if(funcionario[i].tipo_funcionario == GERENTE)
+            printf("%s", "Gerente");
+        else if(funcionario[i].tipo_funcionario == SUPERVISOR)
+            printf("%s", "Supervisor");
+        else if(funcionario[i].tipo_funcionario == VENDEDOR)
+            printf("%s", "Vendedor");
+        printf("\nSalário: R$%.2f", funcionario[i].salario);
+
+        if(id)
+            printf("\nID da organização: %d", id);
+        printf("\n");
+    }
+}
+
+void exibir_pedidos(Pedido **pedido, int quant)
+{
+    for(int i = 0; i < quant; i++)
+    {
+        printf("\nID DO PEDIDO............. %05d\n", pedido[i]->id_pedido);
+        printf("ID DO CLIENTE............ %d\n", pedido[i]->id_cliente);
+        printf("ID DO FUNCIONARIO........ %d\n", pedido[i]->id_vendedor);
+        printf("VALOR DO PEDIDO: R$%.2f\n", pedido[i]->valor);
+        printf("ITENS: \n");
+        
+        for(int j = 0; j < pedido[i]->quant_itens; j++)
+            printf("%d° - %s\n", j + 1, pedido[i]->itens[j]);
+        
+    }
+}
+
+void exibir_cliente(Cliente cliente, int pedidos)
+{
+    if(quant_cliente)
+    {
+        printf("\n----- [ CLIENTE ] -----");
+        exibir_pessoa(cliente.pessoa);
+        printf("\nLimite de crédito: R$%.2f\n", cliente.limite_credito);
+        
+        if(pedidos)
+        {
+            printf("\n----- [ PEDIDOS REALIZADOS ] -----\n");
+            exibir_pedidos(cliente.pedidos, cliente.quant_pedidos);
+        }
+    }
+    else
+        printf("\nNão existem clientes cadastrados\n");
+}
+
+void exibir_todos_clientes(Cliente *cliente, int pedidos)
+{
+    if(quant_cliente)
+    {
+        for(int i = 0; i < quant_cliente; i++)
+            exibir_cliente(cliente[i], pedidos);
+    }
+    else
+        printf("\nNão existem clientes cadastrados\n");
+}
+
+// Função para exibir uma organização
+// Recebe a organização e "se deve exibir os pedidos e funcionários" (0 para não exibir)
+void exibir_organizacao(Organizacao organizacao, int pedidos, int funcionarios)
+{
+    if(quant_organizacao)
+    {
+        printf("\n----- [ %s ] -----\n", organizacao.nome);
+        printf("\nCódigo da organização: %d\n", organizacao.id);
+        
+        if(pedidos)
+        {
+            printf("\nFaturamento da organização: R$%.2f\n", organizacao.faturamento);
+            printf("\n----- [ PEDIDOS REALIZADOS ] -----\n");
+            exibir_pedidos(organizacao.pedidos_efetuados, organizacao.quant_pedidos);
+        }
+
+        if(funcionarios)
+        {
+            printf("\n----- [ FUNCIONÁRIOS CADASTRADOS ] -----\n");
+            exibir_funcionarios(organizacao.funcionario, organizacao.quant_funcionarios, organizacao.id);
+        }
+    }    
+    else
+        printf("\nNão existem organizações cadastradas\n");
+}
+
+void exibir_todas_organizacoes(Organizacao *organizacao, int pedidos, int funcionarios)
+{
+    if(quant_organizacao)
+    {
+        for(int i = 0; i < quant_organizacao; i++)
+            exibir_organizacao(organizacao[i], pedidos, funcionarios);
+    }
+    else
+        printf("\nNão existem organizações cadastradas\n");
+}
+
+void exibir(Organizacao *organizacao, Cliente *cliente)
+{
+    int op;
+
+    do
+    {
+        op = menu_exibir();
+        
+        switch(op)
+        {
+            case 1:
+                exibir_todas_organizacoes(organizacao, organizacao->quant_pedidos, 1);
+                break;
+            case 2:
+                exibir_todos_clientes(cliente, cliente->quant_pedidos);
+                break;
+            case 3:
+                exibir_todas_organizacoes(organizacao, 1, 0);
+                break;
+        }
+
+    }while(op != 0);
+}
+//==========================================================
+
+//================   FUNÇÕES DE ESCOLHA   =================
+
+int escolha_cliente(Cliente *cliente)
+{
+    int pos_cli, id;
+    printf("\nLISTA DE CLIENTES!");
+    do{
+        exibir_todos_clientes(cliente, 0);
+        printf("\nQual o ID do cliente que realizou o pedido?\n-> ");
+        scanf("%d", &id);
+
+        pos_cli = buscar_cliente(cliente, id);
+    }
+    while(pos_cli == -1);
+    
+    return pos_cli;
+}
+
+int escolha_organizacao(Organizacao *organizacao)
+{
+    int pos_org, id;
+    printf("\nLISTA DE ORGANIZAÇÕES!\n");
+    do{
+        exibir_todas_organizacoes(organizacao, 0, 0);
+        printf("\nQual o ID da organização em que foi realizado o pedido?\n-> ");
+        scanf("%d", &id);
+
+        pos_org = buscar_organizacao(organizacao, id);
+    }
+    while(pos_org == -1);
+    
+    return pos_org;
+}
+
+int escolha_funcionario(Funcionario *funcionario, int quant)
+{
+    int id, pos_func;
+    do{
+        printf("\nLISTA DE FUNCIONARIOS!\n");
+        exibir_funcionarios(funcionario, quant, 0);
+        
+        printf("\nQual ID do funcionario que realizou o atendimento?\n-> ");
+        scanf("%d", &id);
+
+        pos_func = buscar_funcionario(funcionario, id, quant);
+    }
+    while(pos_func == -1);
+ 
+    return pos_func;
+}
+
 //================   FUNÇÕES DO CADASTRO   =================
+
 Pessoa cadastrar_pessoa()
 {
     Pessoa pessoa;
 
-    printf("Nome da pessoa: ");
+    printf("\nNome da pessoa: ");
     scanf(" %[^\n]s", pessoa.nome);
 
     quant_pessoas++;
+
     pessoa.id = quant_pessoas;
     printf("Seu ID é: %d", quant_pessoas);
 
@@ -261,49 +531,69 @@ Pessoa cadastrar_pessoa()
     return pessoa;
 }
 
-Pedido cadastrar_pedido(Organizacao *organizacao, int id_cliente)
+
+void cadastrar_pedido(Organizacao *organizacao, Cliente *cliente)
 {
-    // Modificar talvez o void cadastrar_pedido pra receber o Cliente *cliente, e já adicionar ele ao vetor da organização e do cliente
-    Pedido pedido;
-    
-    do
-    {
-        printf("\nQuantidade de pedidos realizada: ");
-        scanf("%d", &pedido.quant_itens);
-    }while(pedido.quant_itens  <= 0);
 
-    pedido.itens = alocarMatrizStr(pedido.quant_itens, MAX_STR);
-
-    for(int i = 0; i < pedido.quant_itens; i++)
+    if(quant_organizacao && quant_cliente)
     {
-        printf("%d item: ", i + 1);
-        scanf("%[^\n]", pedido.itens[i]);
+        Pedido *pedido = alocarPedidoVetor(1);
+        int pos_cli = escolha_cliente(cliente);
+
+        printf("\nValor do Pedido: R$");
+        scanf("%f", &pedido->valor);
+        if (pedido->valor > cliente[pos_cli].limite_credito)
+        {
+            printf("\nO cliente não tem crédito suficiente!\n");
+            liberarVetor(pedido);
+        }
+        else{
+            do
+            {
+                printf("\nQuantidade de produtos do pedido: ");
+                scanf("%d", &pedido->quant_itens);
+                limpa_buffer();
+            }while(pedido->quant_itens  <= 0);
+            
+            pedido->itens = alocarMatrizStr(pedido->quant_itens, MAX_STR);
+
+            for(int i = 0; i < pedido->quant_itens; i++)
+            {
+                printf("%d° item: ", i + 1);
+                scanf("%[^\n]s", pedido->itens[i]);
+                limpa_buffer();
+            }
+            
+            int pos_org = escolha_organizacao(organizacao);
+            int pos_func = escolha_funcionario(organizacao[pos_org].funcionario, organizacao[pos_org].quant_funcionarios);
+
+            quant_pedido++;
+
+            pedido->id_pedido = quant_pedido;
+
+            pedido->id_vendedor = organizacao[pos_org].funcionario[pos_func].pessoa.id;
+            pedido->id_cliente = cliente[pos_cli].pessoa.id;
+            pedido->id_organizacao = organizacao[pos_org].id;
+
+            organizacao[pos_org].pedidos_efetuados = realocarPedido(organizacao[pos_org].pedidos_efetuados, organizacao[pos_org].quant_pedidos + 2);
+
+            organizacao[pos_org].pedidos_efetuados[organizacao[pos_org].quant_pedidos] = pedido;
+            organizacao[pos_org].quant_pedidos += 1;
+            organizacao[pos_org].faturamento += pedido->valor;
+
+            cliente[pos_cli].pedidos = realocarPedido(cliente[pos_cli].pedidos, cliente[pos_cli].quant_pedidos + 2);
+
+            cliente[pos_cli].pedidos[cliente[pos_cli].quant_pedidos] = pedido;
+            cliente[pos_cli].quant_pedidos += 1;
+        }
     }
-
-    printf("Valor do Pedido: ");
-    scanf("%f", &pedido.valor);
-
-    // TODO Exibir os funcionários e escolher o "vendedor"
-    // TODO Criar a função de busca de funcionário
-    // TODO Adicionar o pedido na organização
-    // TODO Adicionar ao faturamento da organização
-
-    // pedido.id_vendedor = ;
-    pedido.id_cliente = id_cliente;
-    // pedido.id_organizacao = funcionario.id_organizacao;
-    
-
-    quant_pedido++;
-
-    pedido.id_pedido = quant_pedido;
-
-    return pedido;
 }
 
-Cliente cadastrar_cliente(){
+Cliente cadastrar_cliente()
+{
     Cliente cliente;
 
-    cliente.pedidos = alocarPedido(1);
+    cliente.pedidos = alocarPedidoMatriz(1);
     cliente.quant_pedidos = 0;
 
     cliente.pessoa = cadastrar_pessoa();
@@ -324,7 +614,7 @@ Funcionario cadastrar_funcionario(int id_org)
     funcionario.pessoa = cadastrar_pessoa();
 
     do{
-        printf("[0] - Gerente\n");
+        printf("\n[0] - Gerente\n");
         printf("[1] - Supervisor\n");
         printf("[2] - Vendedor\n");
         printf("Opção: ");
@@ -345,10 +635,11 @@ Funcionario cadastrar_funcionario(int id_org)
     return funcionario;
 }
 
-Organizacao cadastrar_organizacao(){
+Organizacao cadastrar_organizacao()
+{
     Organizacao organizacao;
 
-    organizacao.pedidos_efetuados = alocarPedido(1);
+    organizacao.pedidos_efetuados = alocarPedidoMatriz(1);
     organizacao.quant_pedidos = 0;
 
     printf("\nNome da organização: ");
@@ -376,7 +667,7 @@ Organizacao cadastrar_organizacao(){
     return organizacao;
 }
 
-void cadastrar(Organizacao *organizacao, Cliente *cliente)
+void cadastrar(Organizacao **organizacao, Cliente **cliente)
 {
     int op;
     
@@ -387,117 +678,21 @@ void cadastrar(Organizacao *organizacao, Cliente *cliente)
         switch (op)
         {
         case 1:
-            *organizacao = cadastrar_organizacao();
+            *organizacao = realocarOrganizacao(*organizacao, quant_organizacao + 2);
+            (*organizacao)[quant_organizacao] = cadastrar_organizacao();
             break;
 
         case 2:
-            *cliente = cadastrar_cliente();
+            *cliente = realocarCliente(*cliente, quant_cliente + 2 );
+            (*cliente)[quant_cliente] = cadastrar_cliente();
             break;
-        
-        default:
+        case 3:
+            cadastrar_pedido(*organizacao, *cliente);
             break;
         }
     }while(op != 0);
 }
 //==========================================================
-
-//=============   FUNÇÕES EXIBIR INFORMAÇÕES   =============
-void exibir_pessoa(Pessoa pessoa)
-{
-    printf("\nNome: %s", pessoa.nome);
-    printf("\nID: %d", pessoa.id);
-    printf("\nIdade: %d", pessoa.idade);
-}
-
-// Função para exibir os funcionários
-// Recebe o endereço do(s) funcionario(s), a quantidade a ser exibida e o ID da organização
-void exibir_funcionarios(Funcionario *funcionario, int quant, int id)
-{
-    for(int i = 0; i < quant; i++)
-    {
-        exibir_pessoa(funcionario[i].pessoa);
-        if(funcionario[i].tipo_funcionario == GERENTE)
-            printf("\n%s", "Gerente");
-        else if(funcionario[i].tipo_funcionario == SUPERVISOR)
-            printf("\n%s", "Supervisor");
-        else if(funcionario[i].tipo_funcionario == VENDEDOR)
-            printf("\n%s", "Vendedor");
-        printf("\nSalário: R$%.2f", funcionario[i].salario);
-
-        if(id)
-            printf("\nID da organização: %d", id);
-    }
-}
-void exibir_pedidos(Pedido *pedido, int quant)
-{
-    for(int i = 0; i < quant; i++)
-    {
-        printf("ID DO PEDIDO:\t %05d\n", pedido->id_pedido);
-        printf("ID DO CLIENTE:\t %d\n", pedido->id_cliente);
-        printf("ID DO FUNCIONARIO:\t %d\n", pedido->id_vendedor);
-        printf("ITENS: %d\n", pedido->id_pedido);
-        
-        for(int i = 0; i < pedido->quant_itens; i++)
-            printf("%d° - %s\n", i + 1, pedido->itens[i]);
-        
-        printf("VALOR DO PEDIDO:\t %.2f\n", pedido->valor);
-    }
-}
-
-void exibir_cliente(Cliente cliente)
-{
-    if(quant_cliente)
-    {
-        exibir_pessoa(cliente.pessoa);
-        printf("\nLimite de crédito: R$%.2f", cliente.limite_credito);
-        
-        printf("\n----- [ PEDIDOS REALIZADOS ] -----\n");
-        exibir_pedidos(cliente.pedidos, cliente.quant_pedidos);
-    }
-    else
-        printf("Não existem clientes cadastrados");
-}
-
-void exibir_organizacao(Organizacao organizacao)
-{
-    if(quant_organizacao)
-    {
-        printf("\n----- [ %s ] -----\n", organizacao.nome);
-        printf("\nCódigo da organização: %d", organizacao.id);
-        
-        printf("\n----- [ PEDIDOS REALIZADOS ] -----\n");
-        exibir_pedidos(organizacao.pedidos_efetuados, organizacao.quant_pedidos);
-
-        printf("\nFuncionários cadastrados");
-        printf("\n----- [ FUNCIONÁRIOS CADASTRADOS ] -----\n");
-        exibir_funcionarios(organizacao.funcionario, organizacao.quant_funcionarios, organizacao.id);
-    }    
-    else
-        printf("Não existem organizações cadastradas");
-}
-
-void exibir(Organizacao *organizacao, Cliente *cliente)
-{
-    int op;
-
-    do
-    {
-        op = menu_exibir();
-        
-        switch(op)
-        {
-            case 1:
-                exibir_organizacao(*organizacao);
-                break;
-            case 2:
-                exibir_cliente(*cliente);
-                break;
-        }
-
-    }while(op != 0);
-}
-//==========================================================
-
 
 
 //=========================//================================
@@ -515,12 +710,25 @@ int main()
         switch(op)
         {
             case 1:
-                cadastrar(organizacao, cliente);
+                cadastrar(&organizacao, &cliente);
                 break;
             case 2:
                 exibir(organizacao, cliente);
                 break;
         }
     }while(op != 0);
+
+    for(int i = 0; i < quant_cliente; i++)
+        liberarMatriz((void **) cliente[i].pedidos, cliente[i].quant_pedidos);
+
+    for(int i = 0; i < quant_organizacao; i++)
+    {
+        for(int j = 0; j < organizacao[i].quant_pedidos; i++)
+            liberarMatriz((void **) organizacao[i].pedidos_efetuados[j]->itens, organizacao[i].pedidos_efetuados[j]->quant_itens);
+        
+        liberarVetor((void *) organizacao[i].funcionario);
+        liberarMatriz((void **) organizacao[i].pedidos_efetuados, organizacao[i].quant_pedidos);
+    }
+
     return 0;
 }
