@@ -360,7 +360,7 @@ void exibir_pedidos(Pedido **pedido, int quant)
         printf("\nID DO PEDIDO............. %05d\n", pedido[i]->id_pedido);
         printf("ID DO CLIENTE............ %d\n", pedido[i]->id_cliente);
         printf("ID DO FUNCIONARIO........ %d\n", pedido[i]->id_vendedor);
-        printf("VALOR DO PEDIDO: R$%.2f\n", pedido[i]->valor);
+        printf("VALOR DO PEDIDO..........R$%.2f\n", pedido[i]->valor);
         printf("ITENS: \n");
         
         for(int j = 0; j < pedido[i]->quant_itens; j++)
