@@ -89,7 +89,7 @@ while True:
         nome = leiaNome()
 
         while True:
-            print()
+            print("\n[Enter para sair]")
             tel = leiaTelefone()
             if(tel == ''):
                 break
