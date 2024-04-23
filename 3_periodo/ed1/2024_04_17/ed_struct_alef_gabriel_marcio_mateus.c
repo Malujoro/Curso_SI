@@ -1,3 +1,9 @@
+// Integrantes do Grupo:
+// Alef Cauan
+// Gabriel Alves
+// Marcio Roberto
+// Mateus da Rocha
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -63,6 +69,7 @@ typedef struct {
     Funcionario *funcionario;
     int quant_pedidos;
     Pedido **pedidos_efetuados;
+    int tipo_organizacao;
 } Organizacao;
 
 //===========   FUNÇÕES ALOCAR/LIBERAR MEMÓRIA   ===========
@@ -365,7 +372,6 @@ void exibir_pedidos(Pedido **pedido, int quant)
         
         for(int j = 0; j < pedido[i]->quant_itens; j++)
             printf("%d° - %s\n", j + 1, pedido[i]->itens[j]);
-        
     }
 }
 
@@ -379,7 +385,7 @@ void exibir_cliente(Cliente cliente, int pedidos)
         
         if(pedidos)
         {
-            printf("\n----- [ PEDIDOS REALIZADOS ] -----\n");
+            printf("\n----- [ PEDIDOS REALIZADOS ] -----");
             exibir_pedidos(cliente.pedidos, cliente.quant_pedidos);
         }
     }
@@ -404,9 +410,15 @@ void exibir_organizacao(Organizacao organizacao, int pedidos, int funcionarios)
 {
     if(quant_organizacao)
     {
-        printf("\n----- [ %s ] -----\n", organizacao.nome);
+        printf("\n--------------- [ %s ] ---------------\n", organizacao.nome);
         printf("\nCódigo da organização: %d\n", organizacao.id);
         
+        printf("\nTipo da organização: ");
+        if(organizacao.tipo_organizacao == PUBLICA)
+            printf("%s", "Pública");
+        else if(organizacao.tipo_organizacao == PRIVADA)
+            printf("%s", "Privada");
+        printf("\n");
         if(pedidos)
         {
             printf("\nFaturamento da organização: R$%.2f\n", organizacao.faturamento);
@@ -416,7 +428,7 @@ void exibir_organizacao(Organizacao organizacao, int pedidos, int funcionarios)
 
         if(funcionarios)
         {
-            printf("\n----- [ FUNCIONÁRIOS CADASTRADOS ] -----\n");
+            printf("\n----- [ FUNCIONÁRIOS CADASTRADOS ] -----");
             exibir_funcionarios(organizacao.funcionario, organizacao.quant_funcionarios, organizacao.id);
         }
     }    
@@ -644,10 +656,19 @@ Organizacao cadastrar_organizacao()
 
     printf("\nNome da organização: ");
     scanf("%[^\n]s", organizacao.nome);
+    
+    do
+    {
+        printf("\nTipo da organização: ");
+        printf("\n[0] - Pública");
+        printf("\n[1] - Privada");
+        printf("\n-> ");
+        scanf(" %d", &organizacao.tipo_organizacao);
+    }while(!validar(0, 1, organizacao.tipo_organizacao));
 
     quant_organizacao++;
     organizacao.id = quant_organizacao;
-    printf("Id da organização: %d", quant_organizacao);
+    printf("\nId da organização: %d", quant_organizacao);
 
     organizacao.faturamento = 0;
 
@@ -724,7 +745,10 @@ int main()
     for(int i = 0; i < quant_organizacao; i++)
     {
         for(int j = 0; j < organizacao[i].quant_pedidos; i++)
+        {
             liberarMatriz((void **) organizacao[i].pedidos_efetuados[j]->itens, organizacao[i].pedidos_efetuados[j]->quant_itens);
+            liberarVetor((void *) organizacao[i].pedidos_efetuados[j]);
+        }
         
         liberarVetor((void *) organizacao[i].funcionario);
         liberarMatriz((void **) organizacao[i].pedidos_efetuados, organizacao[i].quant_pedidos);
