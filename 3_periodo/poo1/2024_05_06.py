@@ -4,7 +4,7 @@ class Pessoa:
         self.nome = nome
         self.matricula = matricula
 
-    def exibir(self):
+    def imprimir(self):
         print(f"Nome: {self.nome}")
         print(f"Matricula: {self.matricula}")
 
@@ -37,6 +37,9 @@ class Conta:
             return True, "Transferência feita com sucesso"
         return False, "Transferência não executada: " + mensagem
 
+
+# p1 = Pessoa("Mateus", 123)
+# p2 = Pessoa("Alef", 13)
 
 c1 = Conta("Alef", 200)
 c2 = Conta("Mateus", 0)
