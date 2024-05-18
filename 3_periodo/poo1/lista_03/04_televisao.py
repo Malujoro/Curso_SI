@@ -118,9 +118,11 @@ class ControleRemoto():
             elif(op == ""):
                 print("\nDesligando TV..")
                 break
+            else:
+                msg = "Erro! Opção inválida"
             
             print(f"\n[{msg}]\n")
 
 
-controle = ControleRemoto(Televisao(98, 2, 12))
+controle = ControleRemoto(Televisao(10, 2, 5))
 controle.menu()
