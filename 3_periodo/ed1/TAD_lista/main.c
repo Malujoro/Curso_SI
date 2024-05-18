@@ -12,8 +12,6 @@ int main(){
     lista = addOrdenadoCrescente(lista);
     lista = addOrdenadoCrescente(lista);
     lista = addOrdenadoCrescente(lista);
-    lista = addInicio(lista);
-    lista = addFinal(lista);
 
     mostrarLista(lista);
     printf("\nTamanho da lista: %d\n", tamanhoDaLista(lista));
