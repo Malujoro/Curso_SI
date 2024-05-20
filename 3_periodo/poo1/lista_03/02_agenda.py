@@ -6,7 +6,7 @@ class Agenda():
         self._listaPessoas = []
 
     def armazenaPessoa(self, pessoa):
-        if(len(self._listaPessoas) <= 10):
+        if(len(self._listaPessoas) < 10):
             self._listaPessoas.append(pessoa)
             return True, "Pessoa armazenada com sucesso"
         
@@ -63,23 +63,26 @@ class Pessoa():
         print(f"Nome: {self._nome} | Idade: {self._idade}")
 
 
-p1 = Pessoa("Mateus", 19)
-p2 = Pessoa("Lucas", 12)
-p3 = Pessoa("Marcio", 20)
-p4 = Pessoa("Alef", 18)
 
 a = Agenda()
-a.armazenaPessoa(p1)
-a.armazenaPessoa(p3)
-a.armazenaPessoa(p4)
-a.armazenaPessoa(p2)
+a.armazenaPessoa(Pessoa("Mateus", 19))
+a.armazenaPessoa(Pessoa("Marcio", 20))
+a.armazenaPessoa(Pessoa("Alef", 18))
+a.armazenaPessoa(Pessoa("Lucas", 12))
+
 
 a.imprimeAgenda()
 print()
 a.buscaPessoa("Marcio")
 
 print()
-a.buscaPessoa("Jonas")
-a.removePessoa("Jonas")
-a.buscaPessoa("Jonas")
+a.buscaPessoa("João")
+a.removePessoa("Marcio")
+a.buscaPessoa("Marcio")
+
+print()
+a.armazenaPessoa(Pessoa("João", 15))
+a.buscaPessoa("João")
+print()
+
 a.imprimeAgenda()
