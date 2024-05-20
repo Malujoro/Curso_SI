@@ -77,35 +77,34 @@ class Elevador():
         return False, "Elevador já está no térreo"
 
 
-    def menu(self):
-        while True:
-            print(f"\nQuantidade de pessoas no elevador: {elevador.quantPessoas}/{elevador.capacidade}")
-            print(f"Andar atual: {elevador.andarAtual}/{elevador.quantAndares}")
-            
-            print("\nMenu do elevador")
-            print("[1] - Entrar pessoa")
-            print("[2] - Sai pessoa")
-            print("[3] - Sobe andar")
-            print("[4] - Desce andar")
-            print("[Enter] - Encerrar programa")
-            op = input("Opção: ")
+def menu():
+    print("\nMenu do elevador")
+    print("[1] - Entrar pessoa")
+    print("[2] - Sai pessoa")
+    print("[3] - Sobe andar")
+    print("[4] - Desce andar")
+    print("[Enter] - Encerrar programa")
+    return input("Opção: ")
 
-            if(op == "1"):
-                _, msg = elevador.entra()
-            elif(op == "2"):
-                _, msg = elevador.sai()
-            elif(op == "3"):
-                _, msg = elevador.sobe()
-            elif(op == "4"):
-                _, msg = elevador.desce()
-            elif(op == ""):
-                print("\nEncerrando programa...")
-                break
-            else:
-                msg = "Erro! Opção inválida"
-            
-            print(f"\n[{msg}]")
+elevador = Elevador(int(input("Capacidade do elevador: ")), int(input("Quantidade de andares (sem contar o térreo): ")))
+while True:
+    print(f"\nQuantidade de pessoas no elevador: {elevador.quantPessoas}/{elevador.capacidade}")
+    print(f"Andar atual: {elevador.andarAtual}/{elevador.quantAndares}")
+    
+    op = menu()
 
-
-elevador = Elevador(5, 7)
-elevador.menu()
+    if(op == "1"):
+        _, msg = elevador.entra()
+    elif(op == "2"):
+        _, msg = elevador.sai()
+    elif(op == "3"):
+        _, msg = elevador.sobe()
+    elif(op == "4"):
+        _, msg = elevador.desce()
+    elif(op == ""):
+        print("\nEncerrando programa...")
+        break
+    else:
+        msg = "Erro! Opção inválida"
+    
+    print(f"\n[{msg}]")
