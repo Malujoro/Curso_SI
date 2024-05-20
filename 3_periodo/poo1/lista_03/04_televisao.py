@@ -93,8 +93,8 @@ class ControleRemoto():
 
     def menu(self):
         while True:
-            print(f"Canal atual: {self._televisao.canalAtual}/{self._televisao.quantCanais}")
-            print(f"Volume atual: {self._televisao.volumeAtual}/100")
+            print(f"Canal atual: {self.canalAtual()}/{self._televisao.quantCanais}")
+            print(f"Volume atual: {self.volumeAtual()}/100")
 
             print("\nMenu do Controle Remoto")
             print("[1] - Aumentar volume")
