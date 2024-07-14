@@ -7,12 +7,10 @@ float raizQuadrada(int num)
 
     while(1)
     {
-        for(int i = 0; raiz * raiz <= num; i++)
+        for(; raiz * raiz < num; raiz += casa)
         {
             if(raiz * raiz == num || raiz + casa == raiz)
                 return raiz;
-
-            raiz += casa;
         }
         raiz -= casa;
         casa /= 10;
