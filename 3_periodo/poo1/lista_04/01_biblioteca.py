@@ -4,10 +4,16 @@ class Emprestavel(abc.ABC):
 
     @abc.abstractmethod
     def obter_info(self):
+        """
+            Método abstrato que retorna informações básicas sobre a mídia
+        """
         pass
 
     @abc.abstractmethod
     def verificar_disponibilidade(self):
+        """
+            Método abstrato que verifica se a mídia está disponível para empréstimo
+        """
         pass
 
 
@@ -75,6 +81,7 @@ class RevistaDigital(Midia):
 
     def __init__(self, titulo, edicao, ano_publicacao, disponivel=True):
         super().__init__(titulo, edicao, disponivel)
+        self._edicao = edicao
         self._ano_publicacao = ano_publicacao
 
     @property
@@ -83,7 +90,7 @@ class RevistaDigital(Midia):
 
     @property
     def edicao(self):
-        return self.autor
+        return self._edicao
 
     def obter_info(self):
         return f"Título: {self.titulo} | Edição: {self.edicao} | Ano de publicação: {self._ano_publicacao}"
@@ -129,7 +136,6 @@ class Biblioteca:
         return True, "Mídias exibidas com sucesso"
         
     
-
 Emprestavel.register(EBook)
 Emprestavel.register(AudioBook)
 Emprestavel.register(RevistaDigital)
@@ -140,13 +146,15 @@ ebook1 = EBook("Python for Beginners", "John Smith", "PDF")
 audiobook1 = AudioBook("The Hobbit", "J.R.R. Tolkien", 360)
 revista1 = RevistaDigital("National Geographic", 150, 2023)
 
-biblioteca.emprestar_midia(ebook1)
-biblioteca.emprestar_midia(audiobook1)
-biblioteca.emprestar_midia(revista1)
-
-biblioteca.listar_itens_emprestados()
+print(biblioteca.emprestar_midia(ebook1)[1])
+print(biblioteca.emprestar_midia(audiobook1)[1])
+print(biblioteca.emprestar_midia(revista1)[1])
 print()
 
-# biblioteca.devolver_midia(ebook1)
+print(biblioteca.listar_itens_emprestados()[1])
+print()
 
-biblioteca.listar_itens_emprestados()
+print(biblioteca.devolver_midia(ebook1)[1])
+print()
+
+print(biblioteca.listar_itens_emprestados()[1])
