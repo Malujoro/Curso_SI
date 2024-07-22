@@ -135,16 +135,16 @@ class Biblioteca:
             print(item.obter_info())
         return True, "Mídias exibidas com sucesso"
         
-    
+
 Emprestavel.register(EBook)
 Emprestavel.register(AudioBook)
 Emprestavel.register(RevistaDigital)
 
 biblioteca = Biblioteca()
 
-ebook1 = EBook("Python for Beginners", "John Smith", "PDF")
-audiobook1 = AudioBook("The Hobbit", "J.R.R. Tolkien", 360)
-revista1 = RevistaDigital("National Geographic", 150, 2023)
+ebook1 = EBook("Como treinar seu Dragão", "Soluço", "PDF")
+audiobook1 = AudioBook("O Rei Leão", "Disney", 120)
+revista1 = RevistaDigital("Recreio", 121, 2024)
 
 print(biblioteca.emprestar_midia(ebook1)[1])
 print(biblioteca.emprestar_midia(audiobook1)[1])
