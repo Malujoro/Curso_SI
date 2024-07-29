@@ -10,7 +10,7 @@ class Configuracoes:
     
 
     def __init__(self):
-        if not hasattr(self, 'initialized'):
+        if not self._initialized:
             self._volume = 75
             self._initialized = True
     

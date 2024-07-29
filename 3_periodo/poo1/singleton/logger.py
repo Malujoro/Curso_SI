@@ -4,13 +4,14 @@ class Logger:
     def __new__(cls):
         if Logger.__instance is None:
             Logger.__instance = super().__new__(cls)
+            Logger.__instance._initialized = False
         return Logger.__instance
 
 
     def __init__(self):
-        if not hasattr(self, 'initialized'):
+        if not self._initialized:
             self._logs = []
-        self.initialized = True
+            self.initialized = True
 
 
     @staticmethod
