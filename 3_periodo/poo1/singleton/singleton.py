@@ -48,7 +48,7 @@ config3 = Configuracoes.get_instance()
 print("Após criar o config 3")
 print(f"Config 1 = {config1.volume}")
 print(f"Config 2 = {config2.volume}")
-print(f"Config 2 = {config3.volume}")
+print(f"Config 3 = {config3.volume}")
 print()
 
 print("Instâncias")
