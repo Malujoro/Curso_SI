@@ -1,5 +1,5 @@
 import abc
-from random import randint
+import random
 
 class Produto(abc.ABC):
 
@@ -15,23 +15,23 @@ class Produto(abc.ABC):
     def disponivel(self):
         pass
 
-    @abc.abstractmethod
-    def exibir(self):
-        pass
-
 
 class Item:
 
     __slots__ = ["_nome", "_preco", "_quant_estoque"]
 
     def __init__(self, nome, preco, quant_estoque):
-        self._nome = nome
+        self._nome = nome.capitalize()
         self._preco = preco
         self._quant_estoque = quant_estoque
 
     @property
     def nome(self):
         return self._nome
+    
+    @property
+    def preco(self):
+        return self._preco
 
     def add_estoque(self, quant):
         if(quant <= 0):
@@ -66,9 +66,13 @@ class Comida(Item):
     def __init__(self, nome, preco, quant_estoque, calorias):
         super().__init__(nome, preco, quant_estoque)
         self._calorias = calorias
-
+    
+    @property
+    def calorias(self):
+        return self._calorias
+            
     def __str__(self):
-        return super().__str__() + f" | Calorias: {self._calorias} kcal"
+        return super().__str__() + f" | Calorias: {self._calorias} cal"
 
 
 class Bebida(Item):
@@ -78,6 +82,10 @@ class Bebida(Item):
     def __init__(self, nome, preco, quant_estoque, capacidade):
         super().__init__(nome, preco, quant_estoque)
         self._capacidade = capacidade
+
+    @property
+    def capacidade(self):
+        return self._capacidade
 
     def __str__(self):
         return super().__str__() + f" | Capacidade: {self._capacidade} ml"
@@ -101,6 +109,12 @@ class ControleEstoque:
         else:
             raise ValueError("Item deve ser um dicionário")
 
+    def existe(self, nome):
+        nome = nome.capitalize()
+        if(nome in self._itens.keys()):
+            return True, "Item existe"
+        return False, "Item não existe"
+
     def add_item(self, item):
         if(isinstance(item, Item)):
             if(self.existe(item.nome)[0]):
@@ -110,13 +124,15 @@ class ControleEstoque:
         return False, "Item inválido"
 
     def remover_item(self, nome):
+        nome = nome.capitalize()
         suc, msg = self.existe(nome)
         if(suc):
             self._itens.pop(nome)
-            return True, "Item removido com sucesso"
+            msg = "Item removido com sucesso"
         return suc, msg
 
     def buscar_item(self, nome):
+        nome = nome.capitalize()
         suc, msg = self.existe(nome)
         obj = None
         if(suc):
@@ -124,23 +140,21 @@ class ControleEstoque:
         return suc, msg, obj
     
     def add_estoque(self, nome, quant):
+        nome = nome.capitalize()
         suc, msg, obj = self.buscar_item(nome)
         if(suc):
             suc, msg = obj.add_estoque(quant)
         return suc, msg
 
     def sub_estoque(self, nome, quant):
+        nome = nome.capitalize()
         suc, msg, obj = self.buscar_item(nome)
         if(suc):
             suc, msg = obj.sub_estoque(quant)
         return suc, msg
 
-    def existe(self, nome):
-        if(nome in self._itens.keys()):
-            return True, "Item existe"
-        return False, "Item não existe"
-
     def disponivel(self, nome):
+        nome = nome.capitalize()
         suc, msg = self.existe(nome)
         if(suc):
             return self._itens[nome].disponivel()
@@ -151,43 +165,224 @@ class ControleEstoque:
             for i in self._itens.values():
                 print(i)
             return True, "Itens exibidos com sucessos"
-        return False, "Não há itens cadastrados"
+        msg = "Não há itens cadastrados"
+        print(msg)
+        return False, msg
 
 
-# class Cliente:
+class Cliente:
 
-#     __slots__ = ["_nome", "_cpf", "_data_nascimento"]
+    __slots__ = ["_nome", "_cpf", "_data_nascimento"]
 
-#     def __init__(self, nome, cpf, data_nascimento):
-#         self._nome = nome
-#         self._cpf = cpf
-#         self._data_nascimento = data_nascimento
+    def __init__(self, nome, cpf, data_nascimento):
+        self._nome = nome.capitalize()
+        self._cpf = cpf
+        self._data_nascimento = data_nascimento
 
-# class ControleClientes:
+    @property
+    def cpf(self):
+        return self._cpf
 
-#     __slots__ = ["_clientes"]
+    def __str__(self):
+        return f"Nome: {self._nome} | CPF: {self._cpf} | Data de nascimento: {self._data_nascimento}"
 
-#     def __init__(self, clientes={}):
-#         self._clientes = clientes
 
-# class Pedido:
+class ControleClientes:
 
-#     id = 0
+    __slots__ = ["_clientes"]
 
-#     __slots__ = ["_id", "_itens", "_pago"]
+    def __init__(self, clientes={}):
+        self._clientes = clientes
 
-#     def __init__(self):
-#         id += 1
-#         self._id = id
-#         self._itens = []
-#         self._pago = False
+    @property
+    def clientes(self):
+        return self._clientes
+    
+    @clientes.setter
+    def clientes(self, clientes):
+        if(isinstance(clientes, dict)):
+            self._clientes = clientes
+        else:
+            raise ValueError("Cliente deve ser um dicionário")
 
-# class ControlePedidos:
+    def existe(self, cpf):
+        if(cpf in self._clientes.keys()):
+            return True, "Cliente existe"
+        return False, "Cliente não existe"
 
-#     __slots__ = ["_pedidos"]
+    def add_cliente(self, cliente):
+        if(isinstance(cliente, Cliente)):
+            if(self.existe(cliente.cpf)[0]):
+                return False, "Cliente já cadastrado"
+            self._clientes[cliente.cpf] = cliente
+            return True, "Cliente cadastrado com sucesso"
+        return False, "Cliente inválido"
+    
+    def remover_cliente(self, cpf):
+        suc, msg = self.existe(cpf)
+        if(suc):
+            self._clientes.pop(cpf)
+            msg = "Cliente removido com sucesso"
+        return suc, msg
 
-#     def __init__(self, pedidos={}):
-#         self._pedidos = pedidos
+    def buscar_cliente(self, cpf):
+        suc, msg = self.existe(cpf)
+        obj = None
+        if(suc):
+            obj = self._clientes[cpf]
+        return suc, msg, obj
+        
+    def exibir_clientes(self):
+        if(self._clientes):
+            for i in self._clientes.values():
+                print(i)
+            return True, "Clientes exibidos com sucessos"
+        msg = "Não há clientes cadastrados"
+        print(msg)
+        return False, msg
+
+
+class Pedido:
+
+    __id = 0
+
+    __slots__ = ["_id", "_itens", "_cpf", "_pago"]
+
+    def __init__(self, cpf):
+        Pedido.__id += 1
+        self._id = Pedido.__id
+        self._itens = {}
+        self._cpf = cpf
+        self._pago = False
+
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def cpf(self):
+        return self._cpf
+    
+    @property
+    def pago(self):
+        return self._pago
+
+    def item_existe(self, item):
+        item = item.capitalize()
+        if(item in self._itens.keys()):
+            return True, "Item existe"
+        return False, "Item não existe"
+    
+    def add_quant(self, nome, quant):
+        suc, msg = self.item_existe(nome)
+        if(suc):
+            suc, msg = self._itens[nome][0].sub_estoque(quant)
+            if(suc):
+                self._itens[nome][1] += quant
+                msg = "Quantidade adicionada com sucesso"
+        return suc, msg
+
+    def sub_quant(self, nome, quant):
+        suc, msg = self.item_existe(nome)
+        if(suc):
+            if(quant <= 0 or quant > self._itens[nome][1]):
+                return False, "Quantidade inválida"
+            self._itens[nome][0].add_estoque(quant)
+            self._itens[nome][1] -= quant
+            msg = "Quantidade removida com sucesso"
+        return suc, msg
+
+    def add_item(self, item, quant):
+        if(isinstance(item, Item)):
+            if(self.item_existe(item.nome)[0]):
+                return False, "Item já adicionado"
+
+            self._itens[item.nome] = [item, 0]
+            suc, msg = self.add_quant(item.nome, quant)
+            if(suc):
+                msg = "Item adicionado com sucesso"
+            else:
+                self.remover_item(item.nome)
+            return suc, msg
+        
+        return False, "Item inválido"
+    
+    def remover_item(self, nome):
+        suc, msg = self.item_existe(nome)
+        if(suc):
+            self.sub_quant(nome, self._itens[nome][1])
+            self._itens.pop(nome)
+            msg = "Item removido com sucesso"
+        return suc, msg
+
+    def calcular_preco(self):
+        preco = 0
+        if(self._itens):
+            for lista in self._itens.values():
+                preco += lista[0].preco * lista[1]
+            return True, "Preço calculado com sucesso", preco
+        return False, "Não há itens cadastrados", preco
+
+    def calcular_calorias(self):
+        calorias = 0
+        if(self._itens):
+            for lista in self._itens.values():
+                if(isinstance(lista[0], Comida)):
+                    calorias += lista[0].calorias * lista[1]
+            return True, "Preço calculado com sucesso", calorias
+        return False, "Não há itens cadastrados", calorias
+
+    def calcular_capacidade(self):
+        capacidade = 0
+        if(self._itens):
+            for lista in self._itens.values():
+                if(isinstance(lista[0], Bebida)):
+                    capacidade += lista[0].capacidade * lista[1]
+            return True, "Preço calculado com sucesso", capacidade
+        return False, "Não há itens cadastrados", capacidade
+
+    def alterar_status(self):
+        self._pago = not self._pago
+
+    def exibir_itens(self):
+        cont = 1
+        if(self._itens):
+            for key, value in self._itens.items():
+                print(f"{cont}º: {key}, Quantidade: {value[1]}")
+                cont += 1
+            return True, "Itens impressos com sucesso"
+        msg = "Não há itens no pedido"
+        print(msg)
+        return False, msg
+
+    def exibir(self):
+        print(f"ID: {self._id} | Pago: {self._pago}")
+        return self.exibir_itens()
+
+
+class ControlePedidos:
+
+    __slots__ = ["_pedidos"]
+
+    def __init__(self, pedidos={}):
+        self._pedidos = pedidos
+
+    @property
+    def pedidos(self):
+        return self._pedidos
+    
+    @pedidos.setter
+    def pedidos(self, pedidos):
+        if(isinstance(pedidos, dict)):
+            self._pedidos = pedidos
+        else:
+            raise ValueError("Pedido deve ser um dicionário")
+        
+    def existe(self, id):
+        if(id in self._pedidos.keys()):
+            return True, "Pedido existe"
+        return False, "Pedido não existe"
+
 
 # class Restaurante:
 
@@ -205,36 +400,62 @@ class ControleEstoque:
 #     def exibir_pedidos(self, cliente, pago):
 #         pass
 
+
+
 Produto.register(Item)
 
 estoque = ControleEstoque()
 
-estoque.add_item(Item("Item1", 10, 5))
-estoque.add_item(Comida("Hamburguer", 14.00, 7, 112))
-estoque.add_item(Bebida("Refrigerante", 7.00, 4, 500))
+item1 = Item("Item1", 10, 5)
+comida1 = Comida("Hamburguer", 14.00, 7, 112)
+bebida1 = Bebida("Refrigerante", 7.00, 4, 500)
+
+estoque.add_item(item1)
+estoque.add_item(comida1)
+estoque.add_item(bebida1)
+
+pedido = Pedido("123")
+pedido.add_item(item1, 3)
+pedido.add_item(comida1, 4)
+pedido.add_item(bebida1, 2)
 
 estoque.exibir_itens()
 print()
+pedido.exibir()
 
+print(pedido.calcular_preco())
+print(pedido.calcular_calorias())
+print(pedido.calcular_capacidade())
 # estoque.remover_item("Item1")
 # estoque.exibir_itens()
-print()
 
-for i in range(4):
-    num = randint(-1, 5)
+
+# pedido.exibir()
+# lista = ["Item1", "Hamburguer", "Refrigerante"]
+# for i in range(4):
+#     num = random.randint(-1, 5)
     
-    print(f"Número: {num}")
-    if(i % 2 == 0):
-        _, imsg = estoque.sub_estoque("Item1", num)
-        _, cmsg = estoque.sub_estoque("Hamburguer", num)
-        _, bmsg = estoque.sub_estoque("Refrigerante", num)
-    else:
-        _, imsg = estoque.add_estoque("Item1", num)
-        _, cmsg = estoque.add_estoque("Hamburguer", num)
-        _, bmsg = estoque.add_estoque("Refrigerante", num)
+#     print(f"\nNúmero: {num}")
 
-    print(imsg)
-    print(cmsg)
-    print(bmsg)
-    estoque.exibir_itens()
-    print()
+#     if(random.randint(0, 5) % 2):
+#         _, msg = pedido.add_quant(random.choice(lista), num)
+#     else:
+#         _, msg = pedido.sub_quant(random.choice(lista), num)
+
+#     print(msg)
+    
+#     print()
+#     pedido.exibir()
+#     print("\nEstoque")
+#     estoque.exibir_itens()
+#     print()
+
+# clientes = ControleClientes()
+# clientes.add_cliente(Cliente("João da silva", "98765432100", "04/11/1958"))
+# clientes.add_cliente(Cliente("Mateus da Rocha Sousa", "12345678900", "02/07/2004"))
+# clientes.add_cliente(Cliente("Roger santos", "12300000", "13/02/2014"))
+
+# print(clientes.buscar_cliente("12345678900"))
+# print(clientes.buscar_cliente("12312312312"))
+
+# clientes.exibir_clientes()
