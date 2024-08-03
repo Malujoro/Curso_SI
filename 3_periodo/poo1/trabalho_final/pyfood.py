@@ -1,5 +1,4 @@
 import abc
-import random
 
 class Produto(abc.ABC):
 
@@ -160,10 +159,11 @@ class ControleEstoque:
             return self._itens[nome].disponivel()
         return suc, msg
     
-    def exibir_itens(self):
+    def exibir_itens(self, disponivel=False):
         if(self._itens):
             for i in self._itens.values():
-                print(i)
+                if(not disponivel or (disponivel and i.disponivel()[0])):
+                    print(i)
             return True, "Itens exibidos com sucessos"
         msg = "Não há itens cadastrados"
         print(msg)
@@ -289,6 +289,8 @@ class Pedido:
                 return False, "Quantidade inválida"
             self._itens[nome][0].add_estoque(quant)
             self._itens[nome][1] -= quant
+            if(self._itens[nome][1] == 0):
+                self._itens.pop(nome)
             msg = "Quantidade removida com sucesso"
         return suc, msg
 
@@ -310,9 +312,11 @@ class Pedido:
     def remover_item(self, nome):
         suc, msg = self.item_existe(nome)
         if(suc):
-            self.sub_quant(nome, self._itens[nome][1])
-            self._itens.pop(nome)
-            msg = "Item removido com sucesso"
+            if(not self._pago):
+                self.sub_quant(nome, self._itens[nome][1])
+                self._itens.pop(nome)
+                return True, "Item removido com sucesso"
+            return False, "Não é possível remover item de pedido pago"
         return suc, msg
 
     def calcular_preco(self):
@@ -329,7 +333,7 @@ class Pedido:
             for lista in self._itens.values():
                 if(isinstance(lista[0], Comida)):
                     calorias += lista[0].calorias * lista[1]
-            return True, "Preço calculado com sucesso", calorias
+            return True, "Calorias calculadas com sucesso", calorias
         return False, "Não há itens cadastrados", calorias
 
     def calcular_capacidade(self):
@@ -338,7 +342,7 @@ class Pedido:
             for lista in self._itens.values():
                 if(isinstance(lista[0], Bebida)):
                     capacidade += lista[0].capacidade * lista[1]
-            return True, "Preço calculado com sucesso", capacidade
+            return True, "Capacidade calculada com sucesso", capacidade
         return False, "Não há itens cadastrados", capacidade
 
     def alterar_status(self):
@@ -356,7 +360,7 @@ class Pedido:
         return False, msg
 
     def exibir(self):
-        print(f"ID: {self._id} | Pago: {self._pago}")
+        print(f"ID: {self._id} | Pago: {self._pago} | Cliente: {self._cpf}")
         return self.exibir_itens()
 
 
@@ -383,22 +387,139 @@ class ControlePedidos:
             return True, "Pedido existe"
         return False, "Pedido não existe"
 
+    def add_pedido(self, cpf):
+        pedido = Pedido(cpf)
+        self._pedidos[pedido.id] = pedido
 
-# class Restaurante:
+    def remover_pedido(self, id):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            if(not obj.pago):
+                self._pedidos.pop(id)
+                return True, "Pedido removido com sucesso"
+            return False, "Não é possível remover pedido pago"
+        return suc, msg
+    
+    def buscar_pedido(self, id):
+        suc, msg = self.existe(id)
+        obj = None
+        if(suc):
+            obj = self.pedidos[id]
+        return suc, msg, obj
+    
+    def pagar_pedido(self, id):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            if(obj.pago):
+                return False, "Pedido já foi pago"
+            obj.alterar_status()
+            return True, "Pedido pago com sucesso"
+        return suc, msg
+    
+    def add_item(self, id, item, quant):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.add_item(item, quant)
+        return suc, msg
 
-#     def __init__(self, itens={}, clientes={}, pedidos={}):
-#         self._itens = itens
-#         self._clientes = clientes
-#         self._pedidos = pedidos
+    def remover_item(self, id, nome):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.remover_item(nome)
+        return suc, msg
 
-#     def exibir_itens(self):
-#         pass
+    def add_quant(self, id, nome, quant):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.add_quant(nome, quant)
+        return suc, msg
 
-#     def exibir_clientes(self):
-#         pass
+    def sub_quant(self, id, nome, quant):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.sub_quant(nome, quant)
+        return suc, msg
 
-#     def exibir_pedidos(self, cliente, pago):
-#         pass
+    def calcular_preco(self, id):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.calcular_preco()
+        return suc, msg
+
+    def calcular_capacidade(self, id):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.calcular_capacidade()
+        return suc, msg
+
+    def calcular_calorias(self, id):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            return obj.calcular_calorias()
+        return suc, msg
+
+    def exibir_pedidos(self, cpf=None, pago=None):
+        if(self._pedidos):
+            for i in self._pedidos.values():
+                if((cpf == None or i.cpf == cpf) and (pago == None or i.pago == pago)):
+                    i.exibir()
+                    print()
+            return True, "Pedidos exibidos com sucessos"
+        msg = "Não há Pedidos cadastrados"
+        print(msg)
+        return False, msg
+
+
+class Restaurante:
+
+    __slots__ = ["_estoque", "_clientes", "_pedidos"]
+
+    def __init__(self, estoque=None, clientes=None, pedidos=None):
+        self._estoque = estoque
+        self._clientes = clientes
+        self._pedidos = pedidos
+
+    @property
+    def estoque(self):
+        return self._estoque
+
+    @estoque.setter
+    def estoque(self, estoque):
+        if(isinstance(estoque, ControleEstoque)):
+            self._estoque = estoque
+        else:
+            raise ValueError("Estoque deve ser do tipo ControleEstoque")
+        
+    @property
+    def clientes(self):
+        return self._clientes
+    
+    @clientes.setter
+    def clientes(self, clientes):
+        if(isinstance(clientes, ControleClientes)):
+            self._clientes = clientes
+        else:
+            raise ValueError("Clientes deve ser do tipo ControleClientes")
+    
+    @property
+    def pedidos(self):
+        return self._pedidos
+    
+    @pedidos.setter
+    def pedidos(self, pedidos):
+        if(isinstance(pedidos, ControlePedidos)):
+            self._pedidos = pedidos
+        else:
+            raise ValueError("Pedidos deve ser do tipo ControlePedidos")
+
+    def exibir_itens(self, disponivel=False):
+        self.estoque.exibir_itens(disponivel)
+
+    def exibir_clientes(self):
+        self.clientes.exibir_clientes()
+
+    def exibir_pedidos(self, cpf, pago):
+        self.pedidos.exibir_pedidos(cpf, pago)
 
 
 
@@ -406,7 +527,7 @@ Produto.register(Item)
 
 estoque = ControleEstoque()
 
-item1 = Item("Item1", 10, 5)
+item1 = Item("Item1", 10, 0)
 comida1 = Comida("Hamburguer", 14.00, 7, 112)
 bebida1 = Bebida("Refrigerante", 7.00, 4, 500)
 
@@ -414,41 +535,28 @@ estoque.add_item(item1)
 estoque.add_item(comida1)
 estoque.add_item(bebida1)
 
-pedido = Pedido("123")
-pedido.add_item(item1, 3)
-pedido.add_item(comida1, 4)
-pedido.add_item(bebida1, 2)
-
+print("[Estoque]")
 estoque.exibir_itens()
+
+pedidos = ControlePedidos()
+pedidos.add_pedido("123")
+pedido = pedidos.buscar_pedido(1)[2]
+pedidos.add_item(1, item1, 3)
+
+pedidos.add_pedido("321")
+pedido = pedidos.buscar_pedido(2)[2]
+pedidos.add_item(2, comida1, 4)
+
+
+pedidos.add_pedido("321")
+pedido = pedidos.buscar_pedido(3)[2]
+# pedidos.add_item()
+pedidos.add_item(3, bebida1, 2)
+
 print()
-pedido.exibir()
+print("[Todos os pedidos]")
+pedidos.exibir_pedidos()
 
-print(pedido.calcular_preco())
-print(pedido.calcular_calorias())
-print(pedido.calcular_capacidade())
-# estoque.remover_item("Item1")
-# estoque.exibir_itens()
-
-
-# pedido.exibir()
-# lista = ["Item1", "Hamburguer", "Refrigerante"]
-# for i in range(4):
-#     num = random.randint(-1, 5)
-    
-#     print(f"\nNúmero: {num}")
-
-#     if(random.randint(0, 5) % 2):
-#         _, msg = pedido.add_quant(random.choice(lista), num)
-#     else:
-#         _, msg = pedido.sub_quant(random.choice(lista), num)
-
-#     print(msg)
-    
-#     print()
-#     pedido.exibir()
-#     print("\nEstoque")
-#     estoque.exibir_itens()
-#     print()
 
 # clientes = ControleClientes()
 # clientes.add_cliente(Cliente("João da silva", "98765432100", "04/11/1958"))
