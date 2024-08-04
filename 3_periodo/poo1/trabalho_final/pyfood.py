@@ -402,7 +402,7 @@ class ControlePedidos:
     
     def existe_item(self, nome: str):
         for ped in self._pedidos.values():
-            if(ped.item_existe(nome)):
+            if(ped.item_existe(nome)[0]):
                 return True, "Há um pedido com esse item"
         return False, "Item não está em nenhum pedido"
 
@@ -436,6 +436,15 @@ class ControlePedidos:
                 return False, "Pedido já foi pago"
             obj.alterar_status()
             return True, "Pedido pago com sucesso"
+        return suc, msg
+    
+    def cancelar_pagamento(self, id: int):
+        suc, msg, obj = self.buscar_pedido(id)
+        if(suc):
+            if(not obj.pago):
+                return False, "Pedido não foi pago"
+            obj.alterar_status()
+            return True, "Pagamento cancelado com sucesso"
         return suc, msg
     
     def add_item(self, id: int, item: Item, quant: int):
@@ -601,7 +610,7 @@ def menu_estoque():
             nome = input("Nome: ")
             suc, msg = pedidos.existe_item(nome)
             if(not suc):
-                _, msg = estoque.remover_item()
+                _, msg = estoque.remover_item(nome)
 
         elif(op == "5"):
             suc, msg, obj = estoque.buscar_item(input("Nome: "))
@@ -672,17 +681,18 @@ def menu_pedidos():
         print(" [2] | Remover pedido")
         print(" [3] | Buscar pedido")
         print(" [4] | Pagar pedido")
-        print(" [5] | Adicionar item no pedido")
-        print(" [6] | Remover item do pedido")
-        print(" [7] | Aumentar quantidade de item no pedido")
-        print(" [8] | Diminuir quantidade de item no pedido")
-        print(" [9] | Calcular preço do pedido")
-        print("[10] | Calcular capacidade do pedido")
-        print("[11] | Calcular calorias do pedido")
-        print("[12] | Exibir todos os pedidos")
-        print("[13] | Exibir pedidos pagos")
-        print("[14] | Exibir pedidos pendentes")
-        print("[15] | Exibir pedidos por cliente")
+        print(" [5] | Cancelar pagamento")
+        print(" [6] | Adicionar item no pedido")
+        print(" [7] | Remover item do pedido")
+        print(" [8] | Aumentar quantidade de item no pedido")
+        print(" [9] | Diminuir quantidade de item no pedido")
+        print("[10] | Calcular preço do pedido")
+        print("[11] | Calcular capacidade do pedido")
+        print("[12] | Calcular calorias do pedido")
+        print("[13] | Exibir todos os pedidos")
+        print("[14] | Exibir pedidos pagos")
+        print("[15] | Exibir pedidos pendentes")
+        print("[16] | Exibir pedidos por cliente")
         print(" [0] | Voltar")
         op = input("Opção: ")
         print()
@@ -706,40 +716,43 @@ def menu_pedidos():
             _, msg = pedidos.pagar_pedido(leia_int("ID: "))
 
         elif(op == "5"):
+            _, msg = pedidos.cancelar_pagamento(leia_int("ID: "))
+
+        elif(op == "6"):
             suc, msg, obj = estoque.buscar_item(leia_nome())
             if(suc):
                 _, msg = pedidos.add_item(leia_int("ID: "), obj, leia_int("Quantidade: "))
 
-        elif(op == "6"):
+        elif(op == "7"):
             _, msg = pedidos.remover_item(leia_int("ID: "), leia_nome())
 
-        elif(op == "7"):
+        elif(op == "8"):
             _, msg = pedidos.add_quant(leia_int("ID: "), leia_nome(), leia_int("Quantidade: "))
 
-        elif(op == "8"):
+        elif(op == "9"):
             _, msg = pedidos.sub_quant(leia_int("ID: "), leia_nome(), leia_int("Quantidade: "))
 
-        elif(op == "9"):
+        elif(op == "10"):
             _, msg, result = pedidos.calcular_preco(leia_int("ID: "))
             print(f"Preço: R${result}")
 
-        elif(op == "10"):
+        elif(op == "11"):
             _, msg, result = pedidos.calcular_capacidade(leia_int("ID: "))
             print(f"Capacidade: {result} ml")
 
-        elif(op == "11"):
+        elif(op == "12"):
             _, msg, result = pedidos.calcular_calorias(leia_int("ID: "))
             print(f"Calorias: {result} cal")
 
-        elif(op == "12" or op == "13" or op == "14" or op == "15"):
+        elif(op == "13" or op == "14" or op == "15" or op == "16"):
             cpf = None
             pago = None
 
-            if(op == "13"):
+            if(op == "14"):
                 pago = True
-            elif(op == "14"):
+            elif(op == "15"):
                 pago = False
-            if(op == "15"):
+            if(op == "16"):
                 cpf = leia_cpf()
 
             print("[Pedidos cadastrados]")
@@ -787,14 +800,14 @@ estoque = ControleEstoque()
 clientes = ControleClientes()
 pedidos = ControlePedidos()
 
-# estoque.add_item(Comida("Maçã", 10, 30, 20))
+estoque.add_item(Comida("Maçã", 10, 30, 20))
 # estoque.add_item(Comida("Banana", 7, 15, 15))
 # estoque.add_item(Bebida("Coca-cola", 10, 20, 500))
 
-# clientes.add_cliente(Cliente("Mateus da rocha sousa", "123.123.123-11", "02/07/2004"))
+clientes.add_cliente(Cliente("Mateus da rocha sousa", "123.123.123-11", "02/07/2004"))
 # clientes.add_cliente(Cliente("Lucas", "111.222.333-44", "12/12/1212"))
 
-# pedidos.add_pedido("123.123.123-11")
+pedidos.add_pedido("123.123.123-11")
 # pedidos.add_pedido("111.222.333-44")
 
 menu_principal()
