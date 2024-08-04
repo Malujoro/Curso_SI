@@ -304,7 +304,7 @@ class Pedido:
         return suc, msg
 
     def add_item(self, item: Item, quant: int):
-        if(isinstance(item, Item)):
+        if(isinstance(item, Produto)):
             if(self.item_existe(item.nome)[0]):
                 return False, "Item já adicionado"
             if(self._pago):
@@ -481,19 +481,19 @@ class ControlePedidos:
         suc, msg, obj = self.buscar_pedido(id)
         if(suc):
             return obj.calcular_preco()
-        return suc, msg
+        return suc, msg, 0
 
     def calcular_capacidade(self, id: int):
         suc, msg, obj = self.buscar_pedido(id)
         if(suc):
             return obj.calcular_capacidade()
-        return suc, msg
+        return suc, msg, 0
 
     def calcular_calorias(self, id: int):
         suc, msg, obj = self.buscar_pedido(id)
         if(suc):
             return obj.calcular_calorias()
-        return suc, msg
+        return suc, msg, 0
 
     def exibir_pedidos(self, cpf: str=None, pago: bool=None):
         if(self._pedidos):
@@ -503,7 +503,6 @@ class ControlePedidos:
                     print()
             return True, "Pedidos exibidos com sucessos"
         msg = "Não há Pedidos cadastrados"
-        print(msg)
         return False, msg
 
 
@@ -733,16 +732,19 @@ def menu_pedidos():
             _, msg = pedidos.sub_quant(leia_int("ID: "), leia_nome(), leia_int("Quantidade: "))
 
         elif(op == "10"):
-            _, msg, result = pedidos.calcular_preco(leia_int("ID: "))
-            print(f"Preço: R${result}")
+            suc, msg, result = pedidos.calcular_preco(leia_int("ID: "))
+            if(suc):
+                print(f"Preço: R${result}")
 
         elif(op == "11"):
-            _, msg, result = pedidos.calcular_capacidade(leia_int("ID: "))
-            print(f"Capacidade: {result} ml")
+            suc, msg, result = pedidos.calcular_capacidade(leia_int("ID: "))
+            if(suc):
+                print(f"Capacidade: {result} ml")
 
         elif(op == "12"):
-            _, msg, result = pedidos.calcular_calorias(leia_int("ID: "))
-            print(f"Calorias: {result} cal")
+            suc, msg, result = pedidos.calcular_calorias(leia_int("ID: "))
+            if(suc):
+                print(f"Calorias: {result} cal")
 
         elif(op == "13" or op == "14" or op == "15" or op == "16"):
             cpf = None
@@ -799,15 +801,5 @@ Produto.register(Item)
 estoque = ControleEstoque()
 clientes = ControleClientes()
 pedidos = ControlePedidos()
-
-estoque.add_item(Comida("Maçã", 10, 30, 20))
-# estoque.add_item(Comida("Banana", 7, 15, 15))
-# estoque.add_item(Bebida("Coca-cola", 10, 20, 500))
-
-clientes.add_cliente(Cliente("Mateus da rocha sousa", "123.123.123-11", "02/07/2004"))
-# clientes.add_cliente(Cliente("Lucas", "111.222.333-44", "12/12/1212"))
-
-pedidos.add_pedido("123.123.123-11")
-# pedidos.add_pedido("111.222.333-44")
 
 menu_principal()
