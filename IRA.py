@@ -77,4 +77,4 @@ if(total_horas > 0):
 
     print(f"IRA final: {IRA}")
 else:
-    print("Não há nenhum período")
+    print("Não há nenhum período iniciado")
