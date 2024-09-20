@@ -38,6 +38,7 @@ class ContaCorrente:
     
     def verificarSaldo(self):
         print(f"Saldo: R${self._saldo:.2f}")
+        return True, "Saldo exibido com sucesso"
     
 
 conta = ContaCorrente(500, 100)

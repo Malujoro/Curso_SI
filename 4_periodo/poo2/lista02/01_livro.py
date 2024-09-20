@@ -53,6 +53,7 @@ class Livro:
         print(f"Título: {self._titulo}")
         print(f"Autor: {self._autor}")
         print(f"Preço: R${self._preco:.2f}")
+        return True, "Livro exibido com sucesso"
 
 
 livros = []

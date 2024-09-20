@@ -29,6 +29,10 @@ class Funcionario:
 
         self._salario += self._salario * porcentagem / 100
         return True, "Aumento calculado com sucesso"
+
+    def exibir(self):
+        print(f"Nome: {self._nome} | Salário: R${self._salario:.2f}")
+        return True, "Funcionário exibido com sucesso"
     
 class Gerente(Funcionario):
 
@@ -49,8 +53,8 @@ class Gerente(Funcionario):
 
 func = Funcionario("João", 1000)
 func.calcularAumento(10)
-print(func.salario)
+func.exibir()
 
-func = Gerente("Mateus", 1000)
-func.calcularAumento(10, 5)
-print(func.salario)
+ger = Gerente("Mateus", 1000)
+ger.calcularAumento(10, 500)
+ger.exibir()
