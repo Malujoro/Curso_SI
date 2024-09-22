@@ -79,12 +79,12 @@ turma.addEstudante(Estudante("Marcelo", 3))
 turma.addEstudante(Estudante("Pedro", 4))
 turma.addEstudante(Estudante("Mateus", 5))
 
-print(f"Estudantes com nota maior que a média ({turma.calcularMediaTurma()[2]:.1f}:")
+print(f"Estudantes com nota maior que a média ({turma.calcularMediaTurma()[2]:.1f}):")
 turma.exibirAcimaMedia()
 
 print()
 print(turma.removerEstudante("Mateus")[1])
 print()
 
-print(f"Estudantes com nota maior que a média ({turma.calcularMediaTurma()[2]:.1f}:")
+print(f"Estudantes com nota maior que a média ({turma.calcularMediaTurma()[2]:.1f}):")
 turma.exibirAcimaMedia()
