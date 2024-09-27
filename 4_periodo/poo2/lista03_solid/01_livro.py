@@ -12,21 +12,21 @@ class Livro:
     def titulo(self):
         return self._titulo
     
-    @property
-    def autor(self):
-        return self._autor
-    
-    @property
-    def numeroPaginas(self):
-        return self._numeroPaginas
-    
     @titulo.setter
     def titulo(self, titulo: str):
         self._titulo = titulo
     
+    @property
+    def autor(self):
+        return self._autor
+    
     @autor.setter
     def autor(self, autor: str):
         self._autor = autor
+    
+    @property
+    def numeroPaginas(self):
+        return self._numeroPaginas
     
     @numeroPaginas.setter
     def numeroPaginas(self, numeroPaginas: int):
@@ -53,6 +53,7 @@ class ControleEstoque:
             print(f"Existem {quant} livros no estoque")
         else:
             print("Não existem livros no estoque")
+
 
 livros = []
 livros.append(Livro("Como treinar seu dragão", "Soluço", 30))

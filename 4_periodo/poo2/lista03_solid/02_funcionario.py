@@ -36,7 +36,7 @@ class Gerente(Funcionario):
             self._bonus = bonus
     
     def calcularSalario(self):
-        return self._salarioBase + self._bonus
+        return self._salarioBase + (self._salarioBase * self._bonus / 100)
     
 class Desenvolvedor(Funcionario):
 
@@ -58,4 +58,10 @@ class Desenvolvedor(Funcionario):
     def calcularSalario(self):
         return self._salarioBase + self._bonus
     
-func = Funcionario()
+    
+func = Funcionario(1000)
+print(f"Salário do Funcionario: R${func.calcularSalario():.2f}")
+ger = Gerente(1000, 10)
+print(f"Salário do Gerente: R${ger.calcularSalario():.2f}")
+dev = Desenvolvedor(1000, 200)
+print(f"Salário do Desenvolvedor: R${dev.calcularSalario():.2f}")
