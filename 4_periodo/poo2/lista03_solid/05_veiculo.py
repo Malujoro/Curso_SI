@@ -1,66 +1,153 @@
 class Veiculo:
+    """
+    Classe que representa um veículo
+
+    Atributos
+    ---------
+    valor: float
+    
+    Métodos
+    ---------
+    calcularIPVA():
+        Calcula o IPVA do veículo
+    """
 
     __slots__ = ["_valor"]
 
-    def __init__(self, valor: float):
+    def __init__(self, valor: float) -> None:
         self._valor = valor
 
     @property
-    def valor(self):
+    def valor(self) -> float:
         return self._valor
     
     @valor.setter
-    def valor(self, valor: float):
+    def valor(self, valor: float) -> None:
         if(valor >= 0):
             self._valor = valor
 
-    def calcularIPVA(self):
+    def calcularIPVA(self) -> float:
         pass
 
 
 class Carro(Veiculo):
+    """
+    Classe que representa um carro (herda de veículo)
 
-    def __init__(self, valor: float):
+    Atributos
+    ---------
+    valor: float
+    
+    Métodos
+    ---------
+    calcularIPVA():
+        Calcula o IPVA do carro
+    """
+
+    def __init__(self, valor: float) -> None:
         super().__init__(valor)
     
-    def calcularIPVA(self):
+    def calcularIPVA(self) -> float:
+        """
+        Calcula o IPVA do carro
+
+        Retorno
+        -------
+        O valor do IPVA (3% do valor do carro)
+        """
         return self._valor * 0.03
     
 
 class Moto(Veiculo):
+    """
+    Classe que representa uma moto (herda de veículo)
 
-    def __init__(self, valor: float):
+    Atributos
+    ---------
+    valor: float
+    
+    Métodos
+    ---------
+    calcularIPVA():
+        Calcula o IPVA da moto
+    """
+
+    def __init__(self, valor: float) -> None:
         super().__init__(valor)
     
-    def calcularIPVA(self):
+    def calcularIPVA(self) -> float:
+        """
+        Calcula o IPVA da moto
+
+        Retorno
+        -------
+        O valor do IPVA (2.5% do valor da moto)
+        """
         return self._valor * 0.025
     
 
 class Caminhao(Veiculo):
+    """
+    Classe que representa um caminhão (herda de veículo)
 
-    def __init__(self, valor: float):
+    Atributos
+    ---------
+    valor: float
+    
+    Métodos
+    ---------
+    calcularIPVA():
+        Calcula o IPVA do caminhão
+    """
+
+    def __init__(self, valor: float) -> None:
         super().__init__(valor)
     
-    def calcularIPVA(self):
+    def calcularIPVA(self) -> float:
+        """
+        Calcula o IPVA do caminhão
+
+        Retorno
+        -------
+        O valor do IPVA (1.5% do valor do caminhão)
+        """
         return self._valor * 0.015
 
 
 class SistemaImpostos:
+    """
+    Classe responsável por calcular IPVA dos veículos
 
+    Atributos
+    ---------
+    veiculo: Veiculo
+    
+    Métodos
+    ---------
+    calcularIPVA():
+        Calcula o IPVA do veículo
+    """
     __slots__ = ["_veiculo"]
 
-    def __init__(self, veiculo: Veiculo):
+    def __init__(self, veiculo: Veiculo) -> None:
         self._veiculo = veiculo
 
     @property
-    def veiculo(self):
+    def veiculo(self) -> Veiculo:
         return self._veiculo
     
     @veiculo.setter
-    def veiculo(self, veiculo: float):
+    def veiculo(self, veiculo: float) -> None:
         self._veiculo = veiculo
     
-    def calcularIPVA(self):
+    def calcularIPVA(self) -> float:
+        """
+        Calcula o IPVA do veículo
+
+        Retorno
+        -------
+        O valor do IPVA do veículo
+        """
         return self._veiculo.calcularIPVA()
     
 

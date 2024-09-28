@@ -1,53 +1,77 @@
-# É uma classe que representa um livro
 class Livro:
+    """
+    Classe que representa um livro
+    
+    Atributos
+    ---------
+    titulo: str
 
+    autor: str
+    
+    numeroPaginas: int
+    """
     __slots__ = ["_titulo", "_autor", "_numeroPaginas"]
 
-    def __init__(self, titulo: str, autor: str, numeroPaginas: int):
+    def __init__(self, titulo: str, autor: str, numeroPaginas: int) -> None:
         self._titulo = titulo
         self._autor = autor
         self._numeroPaginas = numeroPaginas
 
     @property
-    def titulo(self):
+    def titulo(self) -> str:
         return self._titulo
-    
+
     @titulo.setter
-    def titulo(self, titulo: str):
+    def titulo(self, titulo: str) -> None:
         self._titulo = titulo
-    
+
     @property
-    def autor(self):
+    def autor(self) -> str:
         return self._autor
-    
+
     @autor.setter
-    def autor(self, autor: str):
+    def autor(self, autor: str) -> None:
         self._autor = autor
-    
+
     @property
-    def numeroPaginas(self):
+    def numeroPaginas(self) -> int:
         return self._numeroPaginas
-    
+
     @numeroPaginas.setter
-    def numeroPaginas(self, numeroPaginas: int):
+    def numeroPaginas(self, numeroPaginas: int) -> None:
         if(numeroPaginas > 0):
             self._numeroPaginas = numeroPaginas
 
-# É uma classe responsável por  o estoque de livros
-class ControleEstoque:
 
-    def __init__(self, livros: Livro = []):
+class ControleEstoque:
+    """
+    Classe responsável por controlar o estoque de livros
+    
+    Atributos
+    ---------
+    livros: [Livro]
+    
+    Métodos
+    -------
+    exibir()
+        Exibe a quantidade de livros no estoque
+    """
+
+    def __init__(self, livros: Livro = []) -> None:
         self._livros = livros
 
     @property
-    def livros(self):
+    def livros(self) -> Livro:
         return self._livros
     
     @livros.setter
-    def livros(self, livros: Livro):
+    def livros(self, livros: Livro) -> None:
         self._livros = livros
 
-    def exibir(self):
+    def exibir(self) -> None:
+        """
+        Exibe a quantidade de livros no estoque
+        """
         quant = len(self._livros)
         if(quant > 0):
             print(f"Existem {quant} livros no estoque")
