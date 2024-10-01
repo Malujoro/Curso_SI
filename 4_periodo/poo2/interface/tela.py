@@ -2,14 +2,16 @@ from cadastro import *
 
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QLineEdit, QDialog, QFormLayout
-
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QHeaderView
 
 # Tela principal para exibir os clientes
 class TelaClientes(QWidget):
-    def __init__(self, cadastro, clientes = []):
+    def __init__(self, cadastro: Cadastro):
         super().__init__()
         self._cadastro = cadastro
-        self.clientes = clientes  # Lista para armazenar os clientes
+
         self.init_ui()
 
     def init_ui(self):
@@ -21,13 +23,31 @@ class TelaClientes(QWidget):
         # Cria a tabela para listar os clientes
         self.tabela = QTableWidget()
         self.tabela.setRowCount(0)  # Nenhuma linha inicialmente
-        self.tabela.setColumnCount(5)  # Duas colunas: Nome e Idade
+        self.tabela.setColumnCount(5)  # 5 Colunas
         
-        self.tabela.setHorizontalHeaderLabels(["nome", "cpf", "endereco", "cep", "telefone"])  # Cabeçalhos da tabela
+        self.tabela.setHorizontalHeaderLabels(["Nome", "CPF", "Endereço", "CEP", "Telefone"])  # Cabeçalhos da tabela
+
+        for cliente in self._cadastro.clientes.values():
+            self.adicionar_cliente(cliente)
+
+        # Aumenta a fonte do cabeçalho
+        header = self.tabela.horizontalHeader()  # Obtém o cabeçalho horizontal
+        fonte = QFont("Arial", 25, QFont.Bold)  # Define a fonte e o tamanho
+        header.setFont(fonte)
+
+        # Define que as colunas devem esticar para ocupar toda a largura da tabela
+        header.setSectionResizeMode(QHeaderView.Stretch)
+
         layout_principal.addWidget(self.tabela)  # Adiciona a tabela ao layout
 
         # Botão para cadastrar novos clientes
         botao_cadastrar = QPushButton('Cadastrar Cliente')
+        botao_cadastrar.setMinimumSize(200, 100)
+
+        # Aumenta o tamanho da fonte do botão
+        fonte_botao = QFont("Arial", 16)
+        botao_cadastrar.setFont(fonte_botao)
+
         botao_cadastrar.clicked.connect(self.abrir_tela_cadastro)  # Conecta o clique do botão ao método de cadastro
         layout_principal.addWidget(botao_cadastrar)
 
@@ -39,18 +59,20 @@ class TelaClientes(QWidget):
         dialogo.exec_()  # Exibe o diálogo de forma modal
 
     # Função para adicionar um novo cliente à tabela
-    def adicionar_cliente(self, nome, cpf, endereco, cep, telefone):
-        self._cadastro.cadastrar(Cliente(nome, cpf, endereco, cep, telefone))
+    def adicionar_cliente(self, cliente: Cliente):
+        self._cadastro.cadastrar(cliente)
 
         # Adiciona uma nova linha na tabela
         num_linhas = self.tabela.rowCount()
         self.tabela.insertRow(num_linhas)
-        self.tabela.setItem(num_linhas, 0, QTableWidgetItem(nome))
-        self.tabela.setItem(num_linhas, 1, QTableWidgetItem(cpf))
-        self.tabela.setItem(num_linhas, 2, QTableWidgetItem(endereco))
-        self.tabela.setItem(num_linhas, 3, QTableWidgetItem(cep))
-        self.tabela.setItem(num_linhas, 4, QTableWidgetItem(telefone))
+        atributos = [cliente.nome, cliente.cpf, cliente.endereco, cliente.cep, cliente.telefone]
 
+        fonte = QFont("Arial", 22)
+
+        for indice, atributo in enumerate(atributos):
+            item = QTableWidgetItem(atributo)
+            item.setFont(fonte)  # Aplica a fonte ao item
+            self.tabela.setItem(num_linhas, indice, item)
 
 # Tela de cadastro de cliente (um diálogo separado)
 class TelaCadastro(QDialog):
@@ -61,22 +83,26 @@ class TelaCadastro(QDialog):
 
     def init_ui(self):
         self.setWindowTitle('Cadastrar Cliente')  # Título da janela
-        self.setGeometry(150, 150, 300, 150)  # Tamanho e posição da janela
-
+        self.setGeometry(150, 150, 500, 300)  # Tamanho e posição da janela
+        
         layout = QFormLayout()  # Layout de formulário
 
-        # Campos para nome e idade
-        self.nome_input = QLineEdit(self)
-        self.cpf_input = QLineEdit(self)
-        self.endereco_input = QLineEdit(self)
-        self.cep_input = QLineEdit(self)
-        self.telefone_input = QLineEdit(self)
+        # Define a fonte maior para os textos e caixas de texto
+        fonte_label = QFont("Arial", 14)  # Fonte para os rótulos
+        fonte_input = QFont("Arial", 14)  # Fonte para as caixas de texto
 
-        layout.addRow('Nome:', self.nome_input)
-        layout.addRow('CPF:', self.cpf_input)
-        layout.addRow('Endereço:', self.endereco_input)
-        layout.addRow('CEP:', self.cep_input)
-        layout.addRow('Telefone:', self.telefone_input)
+        atributos = ["Nome: ", "CPF: ", "Endereço: ", "CEP: ", "Telefone: "]
+        quant_atributos = len(atributos)
+        
+        self.inputs = []
+
+        for i in range(quant_atributos):
+            self.inputs.append(QLineEdit(self))
+            self.inputs[i].setFont(fonte_input)  # Aplica fonte ao campo de texto
+            self.inputs[i].setFixedSize(250, 30)  # Define o tamanho da caixa de texto
+            label = QLabel(atributos[i], self)
+            label.setFont(fonte_label)
+            layout.addRow(label, self.inputs[i])
 
         # Botão para salvar o cliente
         botao_salvar = QPushButton('Salvar')
@@ -87,14 +113,9 @@ class TelaCadastro(QDialog):
 
     # Função para salvar o cliente e adicionar à tabela
     def salvar_cliente(self):
-        nome = self.nome_input.text()
-        cpf = self.cpf_input.text()
-        endereco = self.endereco_input.text()
-        cep = self.cep_input.text()
-        telefone = self.telefone_input.text()
-
         # Adiciona o cliente à tela principal
-        self.tela_principal.adicionar_cliente(nome, cpf, endereco, cep, telefone)
+        cliente = Cliente(self.inputs[0].text(), self.inputs[1].text(), self.inputs[2].text(), self.inputs[3].text(), self.inputs[4].text())
+        self.tela_principal.adicionar_cliente(cliente)
 
         self.close()  # Fecha a janela de cadastro
 
@@ -112,5 +133,6 @@ if __name__ == '__main__':
     cadastro = Cadastro()
 
     cadastro.cadastrar(Cliente("mateus", "cpf", "end", "cep", "tel"))
-    # iniciar_aplicacao(cad.clientes)
+    cadastro.cadastrar(Cliente("lucas", "cpf2", "end2", "cep2", "tel2"))
+    cadastro.cadastrar(Cliente("joão", "cpf3", "end3", "cep3", "tel3"))
     iniciar_aplicacao(cadastro)
