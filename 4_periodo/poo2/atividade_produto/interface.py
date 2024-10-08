@@ -18,7 +18,7 @@ class Menu(QMainWindow):
 
         central_widget = QWidget(self)
 
-        botoes = {"Adicionar Produto": self.abrir_tela_adicionar_produto, "Buscar Produto": self.abrir_tela_buscar_produto, "Remover Produto": self.abrir_tela_buscar_produto, "Mostrar todos": self.mostrar_todos}
+        botoes = {"Adicionar Produto": self.abrir_tela_adicionar_produto, "Buscar Produto": self.abrir_tela_buscar_produto, "Remover Produto": self.abrir_tela_remover_produto, "Mostrar todos": self.mostrar_todos}
         largura_botao = 200
         altura_botao = 100
         fonte_botao = QFont("Arial", 25)
@@ -47,8 +47,8 @@ class Menu(QMainWindow):
         dialogo = TelaBusca(self)
         dialogo.exec_()
 
-    def buscar_produto(self, nome: str):
-        ret, msg, produto = self._cadastro.buscar_produto(nome)
+    def buscar_produto(self, codigo: str):
+        ret, msg, produto = self._cadastro.buscar_produto(codigo)
     
         if(ret):
             mensagem = (
@@ -57,25 +57,27 @@ class Menu(QMainWindow):
             f"<font size='10'>Preço: R${produto.preco}</font><br>"
             f"<font size='10'>Quantidade em Estoque: {produto.quant_estoque}</font><br>"
             f"<font size='10'>Descrição: {produto.descricao}</font>"
-        )
+            )
             
             QMessageBox.information(self, msg, mensagem, QMessageBox.Ok)
         else:
-            mensagem = (f"<font size='10'>Nenhum produto encontrado com esse nome.</font><br>")
+            mensagem = (f"<font size='10'>Nenhum produto encontrado com esse código.</font><br>")
             QMessageBox.warning(self, msg, mensagem, QMessageBox.Ok)
 
-    def abrir_tela_remover_cliente(self):
+    def abrir_tela_remover_produto(self):
         dialogo = TelaBusca(self, True)
         dialogo.exec_()
 
-    def remover_produto(self, cpf: str):
-        ret, msg, produto = self._cadastro.buscar_produto(cpf)
+    def remover_produto(self, codigo: str):
+        ret, msg, produto = self._cadastro.buscar_produto(codigo)
     
         if(ret):
-            dialogo = TelaCadastroProdutos(self, produto)
-            dialogo.exec_()
+            ret, msg, produto = self._cadastro.remover_produto(produto.codigo)
+            if(ret):
+                mensagem = (f"<font size='10'>Produto removido: {produto.nome}</font><br>")
+            QMessageBox.information(self, msg, mensagem, QMessageBox.Ok)
         else:
-            mensagem = (f"<font size='10'>Nenhum produto encontrado com esse Nome.</font><br>")
+            mensagem = (f"<font size='10'>Nenhum produto encontrado com esse código.</font><br>")
             QMessageBox.warning(self, msg, mensagem, QMessageBox.Ok)
 
     def mostrar_todos(self):
@@ -180,7 +182,7 @@ class TelaBusca(QDialog):
         fonte_label = fonte_padrao
         fonte_input = fonte_padrao
 
-        atributos = ["Nome: "]
+        atributos = ["Código: "]
         
         self.inputs = []
 

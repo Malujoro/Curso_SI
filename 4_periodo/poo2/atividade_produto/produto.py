@@ -61,14 +61,14 @@ class CadastroProdutos:
     def adicionar_produto(self, produto: Produto) -> None:
         self._produtos.append(produto)
     
-    def buscar_produto(self, nome: str) -> tuple[bool, str, Produto]:
+    def buscar_produto(self, codigo: str) -> tuple[bool, str, Produto]:
         for produto in self._produtos:
-            if(nome.upper() == produto.nome.upper()):
+            if(codigo == produto.codigo):
                 return True, "Produto existe", produto
         return False, "Produto não existe", None
 
-    def remover_produto(self, nome: str) -> tuple[bool, str, Produto]:
-        ret, msg, produto = self.buscar_produto(nome)
+    def remover_produto(self, codigo: str) -> tuple[bool, str, Produto]:
+        ret, msg, produto = self.buscar_produto(codigo)
         if(ret):
             self._produtos.remove(produto)
             msg = "Produto removido com sucesso"
