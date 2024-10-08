@@ -150,6 +150,13 @@ class TelaCadastro(QDialog):
             layout.addRow(label, self.inputs[indice])
 
 
+        if(self._cliente):
+            self.inputs[0].setText(self._cliente.nome)
+            self.inputs[1].setText(self._cliente.cpf)
+            self.inputs[2].setText(self._cliente.endereco)
+            self.inputs[3].setText(self._cliente.cep)
+            self.inputs[4].setText(self._cliente.telefone)
+
         botao_salvar = QPushButton('Salvar')
         botao_salvar.clicked.connect(self.salvar_cliente)
         layout.addWidget(botao_salvar)
@@ -160,22 +167,11 @@ class TelaCadastro(QDialog):
     def salvar_cliente(self):
 
         if(self._cliente):
-            if(self.inputs[0].text() != ""):
-                print(self.inputs[0].text)
-                self._cliente.nome = self.inputs[0].text()
-
-            if(self.inputs[1].text() != ""):
-                self._cliente.cpf = self.inputs[1].text()
-
-            if(self.inputs[2].text() != ""):
-                self._cliente.endereco = self.inputs[2].text()
-
-            if(self.inputs[3].text() != ""):
-                self._cliente.cep = self.inputs[3].text()
-
-            if(self.inputs[4].text() != ""):
-                self._cliente.telefone = self.inputs[4].text()
-
+            self._cliente.nome = self.inputs[0].text()
+            self._cliente.cpf = self.inputs[1].text()
+            self._cliente.endereco = self.inputs[2].text()
+            self._cliente.cep = self.inputs[3].text()
+            self._cliente.telefone = self.inputs[4].text()
         else:
             cliente = Cliente(self.inputs[0].text(), self.inputs[1].text(), self.inputs[2].text(), self.inputs[3].text(), self.inputs[4].text())
             self.tela_principal.adicionar_cliente(cliente)
