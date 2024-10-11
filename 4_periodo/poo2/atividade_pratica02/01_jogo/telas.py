@@ -9,12 +9,14 @@ class TelaJogos(QWidget):
     def __init__(self, biblioteca: BibliotecaJogos):
         super().__init__()
         self._biblioteca = biblioteca
-        self.iniciar_ui()
         self._reverse = False
+        self._genero = ""
+        self._labels = []
+        self.iniciar_ui()
 
     def iniciar_ui(self):
         self.setWindowTitle("Gerenciador de jogos")
-        self.setGeometry(650, 250, 500, 300)
+        self.setGeometry(650, 250, 700, 500)
 
         layout = QVBoxLayout()
         
@@ -26,7 +28,7 @@ class TelaJogos(QWidget):
 
         self._tabela.setHorizontalHeaderLabels(colunas)
 
-        self.atualizar_tabela(self._biblioteca.jogos)
+        self.atualizar_tabela(self._biblioteca.jogos, updateText=False)
 
         header = self._tabela.horizontalHeader()
         fonte_header = QFont("Arial", 25, QFont.Bold)
@@ -38,14 +40,15 @@ class TelaJogos(QWidget):
         layout.addWidget(self._tabela)
 
 
+        linha_botoes = QHBoxLayout()
+
         botoes = {"Adicionar Jogo": self.abrir_tela_adicionar_jogo,
-                  "Listar jogos por gênero": self.listar_jogos_genero,
-                  "Filtrar jogos por gênero": self.printar}
+                  "Listar jogos\npor gênero": self.listar_jogos_genero,
+                  "Filtrar jogos\npor gênero": self.abrir_tela_filtrar_genero}
         
         largura_botao = 200
         altura_botao = 100
         fonte_botao = QFont("Arial", 16)
-        linha_botoes = QHBoxLayout()
 
         for nome, funcao in botoes.items():
             botao = QPushButton(nome)
@@ -55,12 +58,29 @@ class TelaJogos(QWidget):
             linha_botoes.addWidget(botao)
         
         layout.addLayout(linha_botoes)
+
+
+        linha_textos = QHBoxLayout()
+
+        textos = {"Gênero": self._genero,
+                  "Média das classificações": f"{self._biblioteca.calcular_media_genero(self._genero):.1f}"}
+
+        for indice, (key, value) in enumerate(textos.items()):
+            self._labels.append(QLabel(f"{key}: {value}", self))
+            self._labels[indice].setStyleSheet("font-size: 24px;")
+            linha_textos.addWidget(self._labels[indice])
+
+        layout.addLayout(linha_textos)
+
         self.setLayout(layout)
 
-    def atualizar_tabela(self, jogos):
+    def atualizar_tabela(self, jogos, updateText = True):
         self._tabela.setRowCount(0)
         for jogo in jogos:
             self.adicionar_jogo(jogo, new = False)
+
+        if(updateText):
+            self.atualizar_texto()
 
     def abrir_tela_adicionar_jogo(self):
         dialogo = TelaCadastroJogos(self)
@@ -82,9 +102,26 @@ class TelaJogos(QWidget):
             self._tabela.setItem(num_linhas, indice, item)
     
     def listar_jogos_genero(self):
+        self._genero = ""
         jogos = self._biblioteca.listar_jogos_genero(self._reverse)
         self.atualizar_tabela(jogos)
         self._reverse = not self._reverse
+
+    def abrir_tela_filtrar_genero(self):
+        dialogo = TelaGenero(self)
+        dialogo.exec_()
+
+    def filtrar_jogo(self, genero):
+        self._genero = genero
+        jogos = self._biblioteca.filtrar_jogos_genero(genero)
+        self.atualizar_tabela(jogos)
+
+    def atualizar_texto(self):
+        textos = {"Gênero": self._genero,
+                  "Média das classificações": f"{self._biblioteca.calcular_media_genero(self._genero):.1f}"}
+
+        for indice, (key, value) in enumerate(textos.items()):
+            self._labels[indice].setText(f"{key}: {value}")
 
     def printar(self):
         print("Clicado")
@@ -99,7 +136,7 @@ class TelaCadastroJogos(QDialog):
 
     def iniciar_ui(self):
         self.setWindowTitle('Cadastrar Jogo')
-        self.setGeometry(500, 150, 500, 300)
+        self.setGeometry(500, 150, 500, 200)
         
         layout = QFormLayout()
 
@@ -114,7 +151,7 @@ class TelaCadastroJogos(QDialog):
         for indice, nome in enumerate(atributos):
             self.inputs.append(QLineEdit(self))
             self.inputs[indice].setFont(fonte_input)
-            self.inputs[indice].setFixedSize(250, 30)
+            self.inputs[indice].setFixedSize(250, 50)
 
             label = QLabel(nome, self)
             label.setFont(fonte_label)
@@ -150,10 +187,56 @@ class TelaCadastroJogos(QDialog):
         self.salvar_jogo()
 
     def salvar_jogo(self):
-        jogo = Jogo(self.inputs[0].text(), self.inputs[1].text(), float(self.inputs[2].text()))
+        atributos = []
+
+        for input in self.inputs:
+            atributos.append(input.text().capitalize())
+
+        jogo = Jogo(atributos[0], atributos[1], float(atributos[2]))
         self._tela_principal.adicionar_jogo(jogo)
         self.close()
 
+
+class TelaGenero(QDialog):
+
+    def __init__(self, tela_principal: TelaJogos):
+        super().__init__()
+        self._tela_principal = tela_principal
+        self.iniciar_ui()
+
+    def iniciar_ui(self):
+        self.setWindowTitle('Filtrar Jogo por Gênero')
+        self.setGeometry(500, 150, 500, 100)
+        
+        layout = QFormLayout()
+
+        fonte_padrao = QFont("Arial", 25)
+        fonte_label = fonte_padrao
+        fonte_input = fonte_padrao
+
+        atributos = ["Gênero: "]
+        
+        self.inputs = []
+
+        for indice, nome in enumerate(atributos):
+            self.inputs.append(QLineEdit(self))
+            self.inputs[indice].setFont(fonte_input)
+            self.inputs[indice].setFixedSize(250, 50)
+
+            label = QLabel(nome, self)
+            label.setFont(fonte_label)
+            layout.addRow(label, self.inputs[indice])
+
+        botao_salvar = QPushButton('Filtrar')
+        botao_salvar.clicked.connect(self.filtrar_jogo)
+        layout.addWidget(botao_salvar)
+
+        self.setLayout(layout)
+
+    def filtrar_jogo(self):
+        genero = self.inputs[0].text().capitalize()
+        self._tela_principal.filtrar_jogo(genero)
+        self.close()
 
 def iniciar_programa(biblioteca: BibliotecaJogos = BibliotecaJogos()):
     app = QApplication(sys.argv)
