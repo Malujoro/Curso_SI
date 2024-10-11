@@ -57,8 +57,8 @@ class BibliotecaJogos:
     def add_jogo(self, jogo: Jogo) -> None:
         self._jogos.append(jogo)
 
-    def listar_jogos_genero(self) -> list[Jogo]:
-        return sorted(self._jogos, key = lambda jogo: jogo.genero)
+    def listar_jogos_genero(self, reverse: bool = False) -> list[Jogo]:
+        return sorted(self._jogos, key = lambda jogo: jogo.genero, reverse = reverse)
     
     def filtrar_jogos_genero(self, genero: str = "") -> list[Jogo]:
 

@@ -10,6 +10,7 @@ class TelaJogos(QWidget):
         super().__init__()
         self._biblioteca = biblioteca
         self.iniciar_ui()
+        self._reverse = False
 
     def iniciar_ui(self):
         self.setWindowTitle("Gerenciador de jogos")
@@ -25,9 +26,7 @@ class TelaJogos(QWidget):
 
         self._tabela.setHorizontalHeaderLabels(colunas)
 
-        for jogo in self._biblioteca.jogos:
-            self.adicionar_jogo(jogo, new = False)
-
+        self.atualizar_tabela(self._biblioteca.jogos)
 
         header = self._tabela.horizontalHeader()
         fonte_header = QFont("Arial", 25, QFont.Bold)
@@ -35,10 +34,12 @@ class TelaJogos(QWidget):
         
         header.setSectionResizeMode(QHeaderView.Stretch)
 
+        self._tabela.setEditTriggers(QAbstractItemView.NoEditTriggers)
         layout.addWidget(self._tabela)
 
+
         botoes = {"Adicionar Jogo": self.abrir_tela_adicionar_jogo,
-                  "Listar jogos por gênero": self.printar,
+                  "Listar jogos por gênero": self.listar_jogos_genero,
                   "Filtrar jogos por gênero": self.printar}
         
         largura_botao = 200
@@ -55,6 +56,11 @@ class TelaJogos(QWidget):
         
         layout.addLayout(linha_botoes)
         self.setLayout(layout)
+
+    def atualizar_tabela(self, jogos):
+        self._tabela.setRowCount(0)
+        for jogo in jogos:
+            self.adicionar_jogo(jogo, new = False)
 
     def abrir_tela_adicionar_jogo(self):
         dialogo = TelaCadastroJogos(self)
@@ -74,6 +80,11 @@ class TelaJogos(QWidget):
             item = QTableWidgetItem(atributo)
             item.setFont(fonte)
             self._tabela.setItem(num_linhas, indice, item)
+    
+    def listar_jogos_genero(self):
+        jogos = self._biblioteca.listar_jogos_genero(self._reverse)
+        self.atualizar_tabela(jogos)
+        self._reverse = not self._reverse
 
     def printar(self):
         print("Clicado")
@@ -122,6 +133,7 @@ class TelaCadastroJogos(QDialog):
             if(input.text() == ""):
                 erro = "Preencha todos os campos."
                 break
+
         if(erro == ""):
             try:
                 valor = float(self.inputs[2].text())
@@ -152,4 +164,7 @@ def iniciar_programa(biblioteca: BibliotecaJogos = BibliotecaJogos()):
 if(__name__ == "__main__"):
     biblioteca = BibliotecaJogos()
     biblioteca.add_jogo(Jogo("Roblox", "Sandbox", 9))
+    biblioteca.add_jogo(Jogo("Csgo", "FPS", 11))
+    biblioteca.add_jogo(Jogo("Lol", "Moba", 1.2))
+    biblioteca.add_jogo(Jogo("Dota 2", "Moba", 5))
     iniciar_programa(biblioteca)
