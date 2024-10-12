@@ -185,16 +185,14 @@ class TelaQuantidade(QDialog):
         ret, msg = self._estoque.add(quant)
         if(ret):
             self._tela_principal.atualizar_lista()
-        texto = (f"<font size='10'>{msg}</font><br>")
-        QMessageBox.information(self, f"{msg}", texto)
+        exibir_box(self, msg, msg)
 
     def sub(self):
         quant = int(self._inputs[0].text())
         ret, msg = self._estoque.sub(quant)
         if(ret):
             self._tela_principal.atualizar_lista()
-        texto = (f"<font size='10'>{msg}</font><br>")
-        QMessageBox.information(self, f"{msg}", texto)
+        exibir_box(self, msg, msg)
 
 
 def iniciar_programa(bicicletas: list[EstoqueMedicamentos] = []):
@@ -202,6 +200,10 @@ def iniciar_programa(bicicletas: list[EstoqueMedicamentos] = []):
     tela = TelaEstoque(bicicletas)
     tela.show()
     sys.exit(app.exec_())
+
+def exibir_box(widget, titulo, texto):
+    texto = (f"<font size='10'>{texto}</font><br>")
+    QMessageBox.information(widget, titulo, texto)
 
 if(__name__ == "__main__"):
     medicamentos = []

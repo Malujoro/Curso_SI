@@ -165,14 +165,12 @@ class TelaHora(QDialog):
     def alugar(self):
         self._bicicleta.alugar()
         self._tela_principal.atualizar_lista()
-        texto = (f"<font size='10'>Bicicleta alugada com sucesso!</font><br>")
-        QMessageBox.information(self, "Alugada", texto)
+        exibir_box(self, "Alugada", "Bicicleta alugada com sucesso!")
 
     def desalugar(self):
         self._bicicleta.desalugar()
         self._tela_principal.atualizar_lista()
-        texto = (f"<font size='10'>Bicicleta desalugada com sucesso!</font><br>")
-        QMessageBox.information(self, "Desalugada", texto)
+        exibir_box(self, "Desalugada", "Bicicleta desalugada com sucesso!")
 
     def fechar_janela(self):
         self.close()
@@ -183,6 +181,10 @@ def iniciar_programa(bicicletas: list[Bicicleta] = []):
     tela = TelaBicicletas(bicicletas)
     tela.show()
     sys.exit(app.exec_())
+
+def exibir_box(widget, titulo, texto):
+    texto = (f"<font size='10'>{texto}</font><br>")
+    QMessageBox.information(widget, titulo, texto)
 
 if(__name__ == "__main__"):
     bicicletas = []
