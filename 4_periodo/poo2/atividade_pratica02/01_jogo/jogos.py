@@ -1,5 +1,3 @@
-import functools as ft
-
 class Jogo:
 
     __slots__ = ["_titulo", "_genero", "_avaliacao"]
