@@ -51,7 +51,7 @@ class TelaItens(QWidget):
 
         linha_botoes = QHBoxLayout()
 
-        botoes = {"Adicionar Item": self.teste,
+        botoes = {"Adicionar Item": self.abrir_tela_adicionar_item,
                   "Remover Item": self.teste,
                   "Aplicar desconto": self.teste}
         
@@ -125,7 +125,7 @@ class TelaCadastroItens(QDialog):
         fonte_label = fonte_padrao
         fonte_input = fonte_padrao
 
-        atributos = ["Título: ", "Gênero: ", "Avaliação: "]
+        atributos = ["Nome: ", "Preço: ", "Quantidade: "]
         
         self.inputs = []
 
@@ -154,11 +154,13 @@ class TelaCadastroItens(QDialog):
 
         if(erro == ""):
             try:
-                valor = float(self.inputs[2].text())
-                if(valor < 0 or valor > 10):
-                    erro = "Digite uma avaliação entre 0 e 10."
+                preco = float(self.inputs[1].text())
+                quantidade = int(self.inputs[2].text())
+                if(preco < 0 or quantidade < 0):
+                    raise
+
             except:
-                erro = "Digite um valor numérico para Avaliação."
+                erro = "Digite valores válidos"
 
         if(erro != ""):
             mensagem = (f"<font size='10'>{erro}</font><br>")
@@ -173,7 +175,7 @@ class TelaCadastroItens(QDialog):
         for input in self.inputs:
             atributos.append(input.text().capitalize())
 
-        item = Item(atributos[0], atributos[1], float(atributos[2]))
+        item = Item(atributos[0], float(atributos[1]), int(atributos[2]))
         self._tela_principal.adicionar_item(item)
         self.close()
 
