@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt
 
 
 class TelaBicicletas(QWidget):
+
     def __init__(self, bicicletas: list[Bicicleta] = []):
         super().__init__()
         self._bicicletas = bicicletas
@@ -128,7 +129,7 @@ class TelaHora(QDialog):
 
         if(erro == ""):
             try:
-                valor = float(self._inputs[0].text())
+                valor = int(self._inputs[0].text())
                 if(valor <= 0):
                     erro = "Digite uma quantidade de horas positiva."
             except:
