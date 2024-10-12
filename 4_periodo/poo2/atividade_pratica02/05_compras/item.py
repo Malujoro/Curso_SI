@@ -41,6 +41,14 @@ class CarrinhoCompras:
     def __init__(self, itens: list[Item] = []) -> None:
         self._itens = itens
 
+    @property
+    def itens(self) -> list[Item]:
+        return self._itens
+    
+    @itens.setter
+    def itens(self, itens: list[Item]):
+        self._itens = itens
+
     def add(self, item: Item) -> None:
         self._itens.append(item)
 
@@ -51,16 +59,13 @@ class CarrinhoCompras:
         return False, "Não foi possível remover"
     
     def calcular_total(self) -> float:
-        media = 0
-        tamanho = len(self._itens)
-        if(tamanho > 0):
-            for item in self._itens:
-                media += item.preco
-            media /= tamanho
-        return media
+        total = 0
+        for item in self._itens:
+            total += item.preco * item.quantidade
+        return total
 
-    def aplicar_desconto(self, porcentagem: float, valor_minimo: float) -> float:
+    def aplicar_desconto(self, desconto: float, valor_minimo: float) -> float:
         total = self.calcular_total()
-        if(total >= valor_minimo):
-            total -= total * porcentagem / 100
+        if(total >= valor_minimo and desconto <= total):
+            total -= desconto
         return total

@@ -123,9 +123,6 @@ class TelaJogos(QWidget):
         for indice, (key, value) in enumerate(textos.items()):
             self._labels[indice].setText(f"{key}: {value}")
 
-    def printar(self):
-        print("Clicado")
-
 
 class TelaCadastroJogos(QDialog):
     
