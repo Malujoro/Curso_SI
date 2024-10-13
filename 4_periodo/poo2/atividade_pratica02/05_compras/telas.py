@@ -26,7 +26,7 @@ class TelaItens(QWidget):
 
         self._tabela.setHorizontalHeaderLabels(colunas)
 
-        self.atualizar_tabela(self._carrinho.itens, updateText=False)
+        self.atualizar_tabela(self._carrinho.itens)
 
         header = self._tabela.horizontalHeader()
         fonte_header = QFont("Arial", 25, QFont.Bold)
@@ -42,7 +42,7 @@ class TelaItens(QWidget):
         layout.addWidget(label_desconto)
 
         textos = {"Total da compra": f"{self._carrinho.calcular_total():.2f}",
-                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50)}",}
+                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50):.2f}",}
 
         for indice, (key, value) in enumerate(textos.items()):
             self._labels.append(QLabel(f"{key}: R$ {value}", self))
@@ -73,22 +73,18 @@ class TelaItens(QWidget):
     def teste(self):
         print("Clicado")
 
-    def atualizar_tabela(self, itens, updateText = True):
+    def atualizar_tabela(self, itens):
         self._tabela.setRowCount(0)
         for item in itens:
-            self.adicionar_item(item, new = False)
-
-        if(updateText):
-            self.atualizar_texto()
+            self.adicionar_item(item, False, False)
 
     def abrir_tela_adicionar_item(self):
         dialogo = TelaCadastroItens(self)
         dialogo.exec_()
 
-    def adicionar_item(self, item: Item, new = True):
+    def adicionar_item(self, item: Item, new = True, updateText = True):
         if(new):
             self._carrinho.add(item)
-
         num_linhas = self._tabela.rowCount()
         self._tabela.insertRow(num_linhas)
 
@@ -99,10 +95,13 @@ class TelaItens(QWidget):
             item = QTableWidgetItem(atributo)
             item.setFont(fonte)
             self._tabela.setItem(num_linhas, indice, item)
+        
+        if(updateText):
+            self.atualizar_texto()
     
     def atualizar_texto(self):
         textos = {"Total da compra": f"{self._carrinho.calcular_total():.2f}",
-                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50)}",}
+                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50):.2f}",}
 
         for indice, (key, value) in enumerate(textos.items()):
             self._labels[indice].setText(f"{key}: R$ {value}")
