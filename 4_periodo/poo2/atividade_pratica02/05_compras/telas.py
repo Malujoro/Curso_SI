@@ -3,6 +3,63 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView, QDialog, QFormLayout, QLineEdit, QLabel, QMessageBox
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import pyqtSignal, QObject
+
+descontos = [10, 50, 0]
+limite_compra = 100
+
+class MonitorTotal(QObject):
+
+    preco_alterado = pyqtSignal(float)
+
+    def __init__(self, preco_limite):
+        super().__init__()
+        self._preco = 0
+        self._avisar = True
+        self._preco_limite = preco_limite
+        self._log_descontos = []
+
+    @property
+    def preco(self) -> float:
+        return self._preco
+
+    @preco.setter
+    def preco(self, preco: float) -> None:
+        if(preco >= 0):
+            if(preco >= self._preco):
+                self._log_descontos = []
+            else:
+                desconto = self._preco - preco
+                self._log_descontos.append(f"Desconto de R${desconto:.2f} aplicado")
+
+            self._preco = preco
+            if(self._avisar):
+                self.preco_alterado.emit(preco)
+
+    @property
+    def preco_limite(self) -> float:
+        return self._preco_limite
+
+    @preco_limite.setter
+    def preco_limite(self, preco_limite: float) -> None:
+        if(preco_limite >= 0):
+            self._preco_limite = preco_limite
+
+    @property
+    def log_descontos(self) -> list[str]:
+        return self._log_descontos
+
+    @log_descontos.setter
+    def log_descontos(self, log_descontos: list[str]) -> None:
+        self._log_descontos = log_descontos
+
+    @property
+    def avisar(self) -> bool:
+        return self._avisar
+
+    @avisar.setter
+    def avisar(self, avisar: bool) -> None:
+        self._avisar = avisar
 
 class TelaItens(QWidget):
 
@@ -10,6 +67,8 @@ class TelaItens(QWidget):
         super().__init__()
         self._carrinho = carrinho
         self._labels = []
+        self._monitor = MonitorTotal(limite_compra)
+        self._monitor.preco_alterado.connect(self.aviso_valor)
         self.iniciar_ui()
 
     def iniciar_ui(self):
@@ -37,23 +96,41 @@ class TelaItens(QWidget):
         self._tabela.setEditTriggers(QAbstractItemView.NoEditTriggers)
         layout.addWidget(self._tabela)
 
-        label_desconto = QLabel("Desconto de R$10.00 em compras acima de R$50.00")
-        label_desconto.setFont(QFont("Arial", 16))
-        layout.addWidget(label_desconto)
+        linha_valores = QHBoxLayout()
 
+        coluna_preco = QVBoxLayout()
+        label_desconto = QLabel(f"Desconto de R${descontos[0]:.2f} em compras acima de R${descontos[1]:.2f}")
+        label_desconto.setFont(QFont("Arial", 16))
+        coluna_preco.addWidget(label_desconto)
+
+        self._monitor.preco = self._carrinho.aplicar_desconto(descontos[0], descontos[1])
+        
         textos = {"Total da compra": f"{self._carrinho.calcular_total():.2f}",
-                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50):.2f}",}
+                  "Total após desconto": f"{self._monitor.preco:.2f}",}
 
         for indice, (key, value) in enumerate(textos.items()):
             self._labels.append(QLabel(f"{key}: R$ {value}", self))
             self._labels[indice].setStyleSheet("font-size: 24px;")
-            layout.addWidget(self._labels[indice])
+            coluna_preco.addWidget(self._labels[indice])
+
+
+        linha_valores.addLayout(coluna_preco)
+
+        self._desconto_edit = QLineEdit(self)
+        self._desconto_edit.setFont(QFont("Arial", 16))
+        self._desconto_edit.setFixedSize(250, 50)
+        self._desconto_edit.setPlaceholderText("Cupom de Desconto")
+
+        linha_valores.addWidget(self._desconto_edit)
+
+        layout.addLayout(linha_valores)
+
 
         linha_botoes = QHBoxLayout()
 
         botoes = {"Adicionar Item": self.abrir_tela_adicionar_item,
-                  "Remover Item": self.teste,
-                  "Aplicar desconto": self.teste}
+                  "Descontos aplicados": self.abrir_tela_resumo,
+                  "Aplicar desconto": self.validar_campo}
         
         largura_botao = 200
         altura_botao = 100
@@ -69,9 +146,6 @@ class TelaItens(QWidget):
         layout.addLayout(linha_botoes)
 
         self.setLayout(layout)
-
-    def teste(self):
-        print("Clicado")
 
     def atualizar_tabela(self, itens):
         self._tabela.setRowCount(0)
@@ -99,12 +173,57 @@ class TelaItens(QWidget):
         if(updateText):
             self.atualizar_texto()
     
-    def atualizar_texto(self):
+    def atualizar_texto(self, calcular = True):
+        if(calcular):
+            self._monitor.avisar = False
+            self._monitor.preco = self._carrinho.calcular_total()
+            self._monitor.avisar = True
+            self._monitor.preco = self._carrinho.aplicar_desconto(descontos[0], descontos[1])
+
         textos = {"Total da compra": f"{self._carrinho.calcular_total():.2f}",
-                  "Total após desconto": f"{self._carrinho.aplicar_desconto(10, 50):.2f}",}
+                  "Total após desconto": f"{self._monitor.preco:.2f}",}
 
         for indice, (key, value) in enumerate(textos.items()):
             self._labels[indice].setText(f"{key}: R$ {value}")
+
+    def abrir_tela_resumo(self):
+        mensagem = ""
+        
+        for desconto in self._monitor.log_descontos:
+            mensagem += (f"<font size='10'>{desconto}</font><br>")
+        
+        if(mensagem == ""):
+            mensagem += "<font size='10'>Nenhum</font><br>"
+
+        QMessageBox.information(self, "Resumo", mensagem, QMessageBox.Ok)
+
+    def validar_campo(self):
+        desconto = self._desconto_edit.text()
+        erro = ""
+
+        if(desconto == ""):
+            erro = "Preencha o campo de desconto."
+
+        if(erro == ""):
+            try:
+                valor = float(desconto)
+                if(valor <= 0 or valor > self._monitor.preco):
+                    raise
+            except:
+                erro = "Digite um valor válido."
+
+        if(erro != ""):
+            mensagem = (f"<font size='10'>{erro}</font><br>")
+            QMessageBox.warning(self, "Erro", mensagem, QMessageBox.Ok)
+            return
+        
+        self._monitor.preco -= valor
+        self.atualizar_texto(False)
+
+    def aviso_valor(self):
+        if(self._monitor.preco >= limite_compra):
+            mensagem = (f"<font size='10'>A compra excedeu o valor de R${limite_compra:.2f}</font><br>")
+            QMessageBox.warning(self, "Erro", mensagem, QMessageBox.Ok)
 
 
 class TelaCadastroItens(QDialog):
