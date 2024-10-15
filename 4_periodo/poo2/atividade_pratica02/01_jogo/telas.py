@@ -89,10 +89,11 @@ class TelaJogos(QWidget):
     def adicionar_jogo(self, jogo: Jogo, new = True):
         if(new):
             self._biblioteca.add_jogo(jogo)
+            self.atualizar_texto()
 
         num_linhas = self._tabela.rowCount()
         self._tabela.insertRow(num_linhas)
-
+        
         atributos = [jogo.titulo, jogo.genero, f"{jogo.avaliacao:.1f}"]
         fonte = QFont("Arial", 22)
 
