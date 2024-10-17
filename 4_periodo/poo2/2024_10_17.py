@@ -1,12 +1,15 @@
-import os
 import csv
 
 def arquivo_existe(nome_arquivo):
-    return os.path.exists(nome_arquivo) 
+    try:
+        with open(nome_arquivo, "r") as arquivo:
+            return True
+    except:
+        return False
 
 def salvar_arquivo(nome_arquivo, lista_dados, cabecalho = ["Nome", "Telefone", "Email"]):
     modo = "a"
-    if not arquivo_existe(nome_arquivo):
+    if(not arquivo_existe(nome_arquivo)):
         modo = "w"
 
     with open(nome_arquivo, modo, newline = "") as arquivo:
@@ -16,20 +19,25 @@ def salvar_arquivo(nome_arquivo, lista_dados, cabecalho = ["Nome", "Telefone", "
         escritor.writerows(lista_dados)
 
 def ler_arquivo(nome_arquivo):
-    if arquivo_existe(nome_arquivo):
-        lista_dados = []
+    lista_dados = []
+    if(arquivo_existe(nome_arquivo)):
         with open(nome_arquivo, "r", newline = "") as arquivo:
             leitor = csv.reader(arquivo)
             for linha in leitor:
                 lista_dados.append(linha)
-            return lista_dados
+    return lista_dados
 
-def exibir_contatos(dados):
-    for linha in dados:
-        print(linha)
+def exibir_contatos(nome_arquivo):
+    lista_dados = ler_arquivo(nome_arquivo)
+    if(lista_dados != []):
+        for linha in lista_dados:
+            print(f"{linha[0]} | {linha[1]} | {linha[2]}")
+    else:
+        print("Não há contatos cadastrados")
 
 cabecalho = ["Nome", "Telefone", "Email"]
-nome_arquivo = "4_periodo/poo2/contatos.csv"
+# nome_arquivo = "4_periodo/poo2/contatos.csv"
+nome_arquivo = "contatos.csv"
 
 while True:
     print("[Menu de contatos]")
@@ -44,8 +52,7 @@ while True:
         email = input("Email: ")
         salvar_arquivo(nome_arquivo, [[nome, telefone, email]])
     elif(op == "2"):
-        lista_dados = ler_arquivo(nome_arquivo)
-        exibir_contatos(lista_dados)
+        exibir_contatos(nome_arquivo)
     elif(op == "0"):
         print("Saindo do programa...")
         break
