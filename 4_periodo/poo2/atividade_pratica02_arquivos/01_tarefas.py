@@ -62,15 +62,18 @@ def concluir_tarefa(nome_arquivo):
     tam = len(lista_dados[1:])
     op = int(input("\nTarefa a ser concluída: "))
     if(op >= 1 and op <= tam):
-        lista_dados[op][2] = "Concluída"
-        salvar_arquivo(nome_arquivo, lista_dados, criar_novo = True)
-        print("\nTarefa concluída com sucesso")
+        if(lista_dados[op][2] == "Concluída"):
+            print("\nTarefa já foi marcada como concluída anteriormente")
+        else:
+            lista_dados[op][2] = "Concluída"
+            salvar_arquivo(nome_arquivo, lista_dados, criar_novo = True)
+            print("\nTarefa concluída com sucesso")
     else:
         print("Tarefa inválida")
 
 
-nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/tarefas.csv"
-# nome_arquivo = "tarefas.csv"
+# nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/tarefas.csv"
+nome_arquivo = "tarefas.csv"
 
 
 while True:
