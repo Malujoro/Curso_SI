@@ -38,24 +38,27 @@ def ler_arquivo(nome_arquivo):
 def exibir_tarefas(nome_arquivo, exibir_linha = False):
     lista_dados = ler_arquivo(nome_arquivo)
 
-    if(lista_dados != []):
-        i = 0
-
-        if(exibir_linha):
-            print("    ", end="")
-
-        for linha in lista_dados:
-            if(i > 0 and exibir_linha):
-                print(f"[{i}º] ", end="")
-
-            print(f"{linha[0]} | {linha[1]} | {linha[2]}")
-            i += 1
-    else:
+    if(lista_dados == []):
         print("Não há tarefas cadastrados")
+        return False
+
+    i = 0
+
+    if(exibir_linha):
+        print("    ", end="")
+
+    for linha in lista_dados:
+        if(i > 0 and exibir_linha):
+            print(f"[{i}º] ", end="")
+
+        print(f"{linha[0]} | {linha[1]} | {linha[2]}")
+        i += 1
+    return True
 
 
 def concluir_tarefa(nome_arquivo):
-    exibir_tarefas(nome_arquivo, True)
+    if(not exibir_tarefas(nome_arquivo, True)):
+        return
 
     lista_dados = ler_arquivo(nome_arquivo)
 
@@ -69,18 +72,17 @@ def concluir_tarefa(nome_arquivo):
             salvar_arquivo(nome_arquivo, lista_dados, criar_novo = True)
             print("\nTarefa concluída com sucesso")
     else:
-        print("Tarefa inválida")
+        print("\nTarefa inválida")
 
 
 # nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/tarefas.csv"
 nome_arquivo = "tarefas.csv"
 
-
 while True:
-    print("[Menu de tarefas]")
-    print("[1] - Adicionar tarefa")
-    print("[2] - Visualizar tarefas")
-    print("[3] - Marcar tarefa como concluída")
+    print("[Menu de Tarefas]")
+    print("[1] - Adicionar Tarefa")
+    print("[2] - Visualizar Tarefas")
+    print("[3] - Marcar Tarefa como concluída")
     print("[0] - Sair do programa")
     op = input("Opção: ")
     print()
