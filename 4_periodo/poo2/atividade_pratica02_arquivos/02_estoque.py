@@ -39,7 +39,7 @@ def exibir_estoque(nome_arquivo, exibir_linha = False):
     lista_dados = ler_arquivo(nome_arquivo)
 
     if(lista_dados == []):
-        print("Não há tarefas cadastrados")
+        print("Não há produtos cadastrados")
         return False
 
     i = 1
@@ -64,17 +64,40 @@ def atualizar_estoque(nome_arquivo):
     lista_dados = ler_arquivo(nome_arquivo)
 
     tam = len(lista_dados[1:])
-    op = int(input("\nProduto a ser atualizado: "))
+    op = leia_int("\nProduto a ser atualizado: ")
     if(op >= 1 and op <= tam):
-        lista_dados[op][1] = int(input("Nova quantidade: "))
+        quant = leia_int("\nNova quantidade: ")
+        lista_dados[op][1] = quant
         salvar_arquivo(nome_arquivo, lista_dados, criar_novo = True)
         print("\nProduto atualizado com sucesso")
     else:
         print("\nProduto inválido")
 
 
-nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/estoque.csv"
-# nome_arquivo = "estoque.csv"
+def leia_int(texto):
+    while True:
+        try:
+            valor = int(input(texto))
+            if(valor < 0):
+                raise
+            return valor
+        except:
+            print("\nDigite um número válido\n")
+
+
+def leia_float(texto):
+    while True:
+        try:
+            valor = float(input(texto))
+            if(valor < 0):
+                raise
+            return valor
+        except:
+            print("\nDigite um valor válido\n")
+
+
+# nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/estoque.csv"
+nome_arquivo = "estoque.csv"
 
 while True:
     print("[Menu de Estoque]")
@@ -86,8 +109,8 @@ while True:
     print()
     if(op == "1"):
         nome = input("Nome do Produto: ")
-        quant = int(input("Quantidade em Estoque: "))
-        preco = float(input("Preço unitário: R$"))
+        quant = leia_int("Quantidade em Estoque: ")
+        preco = leia_float("Preço unitário: R$")
         salvar_arquivo(nome_arquivo, [[nome, quant, preco]])
     elif(op == "2"):
         exibir_estoque(nome_arquivo)

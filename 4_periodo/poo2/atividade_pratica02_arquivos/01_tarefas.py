@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 
 
 def arquivo_existe(nome_arquivo):
@@ -63,7 +64,7 @@ def concluir_tarefa(nome_arquivo):
     lista_dados = ler_arquivo(nome_arquivo)
 
     tam = len(lista_dados[1:])
-    op = int(input("\nTarefa a ser concluída: "))
+    op = leia_int("\nTarefa a ser concluída: ")
     if(op >= 1 and op <= tam):
         if(lista_dados[op][2] == "Concluída"):
             print("\nTarefa já foi marcada como concluída anteriormente")
@@ -73,6 +74,27 @@ def concluir_tarefa(nome_arquivo):
             print("\nTarefa concluída com sucesso")
     else:
         print("\nTarefa inválida")
+
+
+def leia_int(texto):
+    while True:
+        try:
+            valor = int(input(texto))
+            if(valor < 0):
+                raise
+            return valor
+        except:
+            print("\nDigite um número válido\n")
+
+
+def leia_data(texto):
+    while True:
+        try:
+            data_str = input(texto)
+            data = datetime.strptime(data_str, "%d/%m/%Y")
+            return data.strftime('%d/%m/%Y')
+        except:
+            print("\nData inválida! Formato correto: dd/mm/yyyy\n")
 
 
 # nome_arquivo = "4_periodo/poo2/atividade_pratica02_arquivos/tarefas.csv"
@@ -88,7 +110,7 @@ while True:
     print()
     if(op == "1"):
         descricao = input("Descrição da tarefa: ")
-        data = input("Data de vencimento: ")
+        data = leia_data("Data de vencimento: ")
         salvar_arquivo(nome_arquivo, [[descricao, data, "Pendente"]])
     elif(op == "2"):
         exibir_tarefas(nome_arquivo)
