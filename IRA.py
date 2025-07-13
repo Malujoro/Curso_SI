@@ -64,13 +64,23 @@ disciplinas = [
         "pweb1": [[10, 10, 10], 60],
         "redes1": [[10, 9.8, 10], 60],
     },
+    # 5º Período
+    {
+        "aps": [[9.5, 9, 10], 60],
+        "auditoria": [[10, 9.9, 9], 60],
+        "financeira": [[10, 10, 10], 60],
+        "funcional": [[10, 10], 30],
+        "pweb2": [[10, 10, 10], 60],
+        "paa": [[9.5, 10, 10], 60],
+        "redes2": [[10, 10, 10], 60],
+    },
 ]
 
 total_periodos = []
 matriz_horas = []
 quant_periodos = len(disciplinas)
 
-usar_periodos = 4
+usar_periodos = 5
 utilizar_periodo = ([True] * usar_periodos) + ([False] * (quant_periodos -  usar_periodos))
 
 for periodo, materias in enumerate(disciplinas):
